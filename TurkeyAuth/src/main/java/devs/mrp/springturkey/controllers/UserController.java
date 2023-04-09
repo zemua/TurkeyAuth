@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import devs.mrp.springturkey.entities.User;
+import devs.mrp.springturkey.controllers.dtos.UserDto;
 import reactor.core.publisher.Mono;
 
 @RestController
@@ -14,7 +14,7 @@ import reactor.core.publisher.Mono;
 public class UserController {
 
 	@PostMapping
-	public Mono<ResponseEntity<User>> create(@RequestBody Mono<User> data) {
+	public Mono<ResponseEntity<UserDto>> create(@RequestBody Mono<UserDto> data) {
 		return data.map(user -> ResponseEntity.ok(user));
 	}
 
