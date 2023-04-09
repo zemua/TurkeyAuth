@@ -3,16 +3,19 @@ package devs.mrp.springturkey.controllers;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import devs.mrp.springturkey.configuration.SecurityConfig;
 import devs.mrp.springturkey.entities.User;
 import reactor.core.publisher.Mono;
 
 @WebFluxTest(controllers = UserController.class)
+@Import(SecurityConfig.class)
 class UserControllerTest {
 
 	@Autowired
