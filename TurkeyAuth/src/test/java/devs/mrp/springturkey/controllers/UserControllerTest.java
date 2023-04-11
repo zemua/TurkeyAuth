@@ -25,7 +25,7 @@ class UserControllerTest {
 		UserDto user = new UserDto("test@email.com");
 
 		webClient.post()
-		.uri("/user")
+		.uri("/user/create")
 		.contentType(MediaType.APPLICATION_JSON)
 		.body(Mono.just(user), UserDto.class)
 		.exchange()

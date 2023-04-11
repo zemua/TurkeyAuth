@@ -13,7 +13,7 @@ import reactor.core.publisher.Mono;
 @RequestMapping(path = "/user")
 public class UserController {
 
-	@PostMapping
+	@PostMapping("/create")
 	public Mono<ResponseEntity<UserDto>> create(@RequestBody Mono<UserDto> data) {
 		return data.map(user -> ResponseEntity.ok(user));
 	}

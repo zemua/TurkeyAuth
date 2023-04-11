@@ -1,0 +1,52 @@
+{"properties": [
+  {
+    "name": "turkey.scheme",
+    "type": "java.lang.String",
+    "description": "A description for 'turkey.scheme'"
+  },
+  {
+    "name": "turkey.host",
+    "type": "java.lang.String",
+    "description": "A description for 'turkey.host'"
+  },
+  {
+    "name": "turkey.authscheme",
+    "type": "java.lang.String",
+    "description": "A description for 'turkey.authscheme'"
+  },
+  {
+    "name": "turkey.authport",
+    "type": "java.lang.String",
+    "description": "A description for 'turkey.authport'"
+  },
+  {
+    "name": "turkey.authhost",
+    "type": "java.lang.String",
+    "description": "A description for 'turkey.authhost'"
+  },
+  {
+    "name": "turkey.authclient",
+    "type": "java.lang.String",
+    "description": "A description for 'turkey.authclient'"
+  },
+  {
+    "name": "turkey.authsecret",
+    "type": "java.lang.String",
+    "description": "A description for 'turkey.authsecret'"
+  },
+  {
+    "name": "turkey.logouturl",
+    "type": "java.lang.String",
+    "description": "A description for 'turkey.logouturl'"
+  },
+  {
+    "name": "jwk.endpoint",
+    "type": "java.lang.String",
+    "description": "A description for 'jwk.endpoint'"
+  },
+  {
+    "name": "turkey.realm",
+    "type": "java.lang.String",
+    "description": "A description for 'turkey.realm'"
+  }
+]}
