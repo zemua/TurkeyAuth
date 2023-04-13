@@ -17,7 +17,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import devs.mrp.springturkey.configuration.SecurityConfig;
 import devs.mrp.springturkey.controllers.dtos.UserDto;
 import devs.mrp.springturkey.exceptions.ClientRequestException;
-import devs.mrp.springturkey.exceptions.UnauthorizedException;
+import devs.mrp.springturkey.exceptions.KeycloakClientUnauthorizedException;
 import devs.mrp.springturkey.services.oauth.CreateUserCase;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
@@ -69,7 +69,7 @@ class UserControllerTest {
 		UserDto user = new UserDto("test@email.com");
 
 		Exception ex = new Exception("An error ocurred");
-		when(createUserCase.createUser(ArgumentMatchers.any(Mono.class))).thenReturn(Mono.error(new UnauthorizedException()));
+		when(createUserCase.createUser(ArgumentMatchers.any(Mono.class))).thenReturn(Mono.error(new KeycloakClientUnauthorizedException()));
 
 		webClient.post()
 		.uri("/user/create")

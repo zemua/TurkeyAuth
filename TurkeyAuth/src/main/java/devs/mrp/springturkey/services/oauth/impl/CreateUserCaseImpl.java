@@ -9,7 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import devs.mrp.springturkey.entities.User;
 import devs.mrp.springturkey.exceptions.ClientRequestException;
-import devs.mrp.springturkey.exceptions.UnauthorizedException;
+import devs.mrp.springturkey.exceptions.KeycloakClientUnauthorizedException;
 import devs.mrp.springturkey.services.oauth.AuthClient;
 import devs.mrp.springturkey.services.oauth.CreateUserCase;
 import reactor.core.publisher.Mono;
@@ -39,7 +39,7 @@ public class CreateUserCaseImpl implements CreateUserCase {
 					if (response.statusCode().is2xxSuccessful()) {
 						return Mono.just(user);
 					} else if (response.statusCode().value() == 401) {
-						return Mono.error(new UnauthorizedException());
+						return Mono.error(new KeycloakClientUnauthorizedException());
 					} else if (response.statusCode().is4xxClientError()) {
 						return Mono.error(new ClientRequestException());
 					} else {
