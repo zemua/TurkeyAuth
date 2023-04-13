@@ -50,7 +50,7 @@ public class CreateUserCaseImpl implements CreateUserCase {
 		} else if (response.statusCode().value() == 401) {
 			return Mono.error(new KeycloakClientUnauthorizedException());
 		} else if (response.statusCode().is4xxClientError()) {
-			return Mono.error(new ClientRequestException());
+			return Mono.error(new ClientRequestException(response.statusCode()));
 		} else {
 			return response.createException()
 					.flatMap(Mono::error);

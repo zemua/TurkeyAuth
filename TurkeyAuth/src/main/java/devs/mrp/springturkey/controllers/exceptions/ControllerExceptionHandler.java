@@ -10,7 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @RestControllerAdvice
 @Slf4j
-public class TurkeyExceptionHandler {
+public class ControllerExceptionHandler {
 
 	@ExceptionHandler(KeycloakClientUnauthorizedException.class)
 	public ResponseEntity<?> handleKeycloakClientUnauthorizedException(KeycloakClientUnauthorizedException ex) {
@@ -21,7 +21,7 @@ public class TurkeyExceptionHandler {
 	@ExceptionHandler(ClientRequestException.class)
 	public ResponseEntity<?> handleClientRequestException(ClientRequestException ex) {
 		log.error("Handling exception:", ex);
-		return ResponseEntity.badRequest().build();
+		return ResponseEntity.status(ex.getResponse()).build();
 	}
 
 }
