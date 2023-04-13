@@ -59,7 +59,7 @@ class CreateUserCaseImplTest {
 
 	@Test
 	void testCreateUser() throws InterruptedException, JsonProcessingException {
-		User user = User.builder().email("some@test.mail").build();
+		User user = User.builder().email("some@test.mail").username("some@test.mail").build();
 
 		ObjectMapper objectMapper = new ObjectMapper();
 		mockWebServer.enqueue(new MockResponse()
@@ -75,6 +75,7 @@ class CreateUserCaseImplTest {
 		RecordedRequest recordedRequest = mockWebServer.takeRequest();
 		assertEquals("POST", recordedRequest.getMethod());
 		assertEquals("/auth/admin/realms/Turkey/users", recordedRequest.getPath());
+		assertEquals("{\"username\":\"some@test.mail\",\"email\":\"some@test.mail\"}", recordedRequest.getBody().readUtf8());
 	}
 
 }

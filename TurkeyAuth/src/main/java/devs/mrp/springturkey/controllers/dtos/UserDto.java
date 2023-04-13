@@ -26,6 +26,7 @@ public class UserDto {
 	public User toUser() {
 		return User.builder()
 				.email(this.email)
+				.username(this.email)
 				.build();
 	}
 

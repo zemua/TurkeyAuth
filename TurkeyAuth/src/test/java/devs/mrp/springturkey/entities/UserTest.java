@@ -10,7 +10,7 @@ class UserTest {
 
 	@Test
 	void convertFromUser() {
-		User user = User.builder().email("some@email.com").build();
+		User user = User.builder().email("some@email.com").username("another@e.mail").build();
 		UserDto dto = new UserDto(user);
 		assertEquals(user.getEmail(), dto.getEmail());
 	}
@@ -20,6 +20,7 @@ class UserTest {
 		UserDto dto = new UserDto("some@mail.com");
 		User user = dto.toUser();
 		assertEquals(dto.getEmail(), user.getEmail());
+		assertEquals(dto.getEmail(), user.getUsername());
 	}
 
 }
