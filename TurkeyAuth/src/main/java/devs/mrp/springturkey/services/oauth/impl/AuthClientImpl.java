@@ -2,12 +2,15 @@ package devs.mrp.springturkey.services.oauth.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
+import org.springframework.http.HttpHeaders;
+import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import devs.mrp.springturkey.services.oauth.AuthClient;
+import devs.mrp.springturkey.services.oauth.TokenRequestor;
+import reactor.core.publisher.Mono;
 
-@Service
+@Component
 public class AuthClientImpl implements AuthClient {
 
 	@Autowired
@@ -25,11 +28,26 @@ public class AuthClientImpl implements AuthClient {
 	@Value("${turkey.authcontenttype}")
 	private String contentType;
 
+	@Autowired
+	private TokenRequestor adminTokenRequestor;
+
 	@Override
-	public WebClient getClient() {
+	public Mono<WebClient> getClient() {
+		return adminTokenRequestor.getToken()
+				.map(token -> buildAuthorizedClient(token));
+	}
+
+	private String resolveBaseUrl() {
+		return authScheme + "://" + authHost + ":" + authPort;
+	}
+
+	private WebClient buildAuthorizedClient(String token) {
 		return clientBuilder
-				.baseUrl(authScheme + "://" + authHost + ":" + authPort)
-				.defaultHeader("Content-Type", contentType)
+				.baseUrl(resolveBaseUrl())
+				.defaultHeaders(httpHeaders -> {
+					httpHeaders.set(HttpHeaders.CONTENT_TYPE, contentType);
+					httpHeaders.set(HttpHeaders.AUTHORIZATION, "Bearer " + token);
+				})
 				.build();
 	}
 

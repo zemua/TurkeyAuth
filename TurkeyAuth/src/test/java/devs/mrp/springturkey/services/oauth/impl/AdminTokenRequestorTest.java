@@ -1,7 +1,6 @@
 package devs.mrp.springturkey.services.oauth.impl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 
@@ -11,36 +10,30 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.util.ReflectionTestUtils;
-import org.springframework.web.reactive.function.client.WebClient;
 
-import devs.mrp.springturkey.services.oauth.TokenRequestor;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import okhttp3.mockwebserver.RecordedRequest;
-import reactor.core.publisher.Mono;
 
 @EnableAutoConfiguration
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ContextConfiguration(classes = { AuthClientImpl.class })
+@ContextConfiguration(classes = { AdminTokenRequestor.class })
 @TestPropertySource(locations = "classpath:application.yml")
-class AuthClientImplTest {
+class AdminTokenRequestorTest {
 
 	private MockWebServer mockWebServer;
 	@Autowired
-	private AuthClientImpl authClient;
-	@MockBean
-	private TokenRequestor adminTokenRequestor;
+	private AdminTokenRequestor adminTokenRequestor;
 
 	@BeforeEach
 	public void setup() throws Exception {
 		mockWebServer = new MockWebServer();
 		mockWebServer.start();
 
-		ReflectionTestUtils.setField(authClient, "authPort", mockWebServer.getPort());
+		ReflectionTestUtils.setField(adminTokenRequestor, "authPort", mockWebServer.getPort());
 	}
 
 	@AfterEach
@@ -50,21 +43,27 @@ class AuthClientImplTest {
 
 	@Test
 	void testCall() throws InterruptedException {
-		mockWebServer.enqueue(new MockResponse().setBody("Hello world!"));
-		when(adminTokenRequestor.getToken()).thenReturn(Mono.just("someToken"));
+		mockWebServer.enqueue(new MockResponse().setBody(sampleResponseBody()).setHeader("Content-Type", "application/json"));
 
-		WebClient client = authClient.getClient().block();
-		client.get()
-		.uri("/path/to/endpoint")
-		.retrieve()
-		.bodyToMono(String.class)
-		.block();
+		String result = adminTokenRequestor.getToken().block();
+
+		assertEquals("eyJhbGciOiJSUzI1Ni", result);
 
 		RecordedRequest request = mockWebServer.takeRequest();
-		assertEquals("GET", request.getMethod());
-		assertEquals("/path/to/endpoint", request.getPath());
-		assertEquals("application/json", request.getHeader("Content-Type"));
-		assertEquals("Bearer someToken", request.getHeader("Authorization"));
+		assertEquals("POST", request.getMethod());
+		assertEquals("/auth/realms/Turkey/protocol/openid-connect/token", request.getPath());
+		assertEquals("application/x-www-form-urlencoded;charset=UTF-8", request.getHeader("Content-Type"));
+	}
+
+	private String sampleResponseBody() {
+		return "{\n"
+				+ "    \"access_token\": \"eyJhbGciOiJSUzI1Ni\",\n"
+				+ "    \"expires_in\": 300,\n"
+				+ "    \"refresh_expires_in\": 0,\n"
+				+ "    \"token_type\": \"Bearer\",\n"
+				+ "    \"not-before-policy\": 0,\n"
+				+ "    \"scope\": \"profile email\"\n"
+				+ "}";
 	}
 
 }

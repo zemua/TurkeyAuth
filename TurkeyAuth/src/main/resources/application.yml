@@ -8,6 +8,7 @@ turkey:
   realm: Turkey
   authclient: turkeyTest
   authsecret: gYrhtCrDekDl0nkclhI1yjWN5dUqTbND
+  tokenproperty: access_token
 jwk:
   endpoint: ${turkey.authscheme}://${turkey.authhost}:${turkey.authport}/auth/realms/${turkey.realm}/protocol/openid-connect/certs
 spring:

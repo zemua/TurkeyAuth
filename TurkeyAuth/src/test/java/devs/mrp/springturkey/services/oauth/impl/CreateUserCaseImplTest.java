@@ -54,7 +54,7 @@ class CreateUserCaseImplTest {
 	@BeforeEach
 	void initialize() {
 		String baseUrl = String.format("http://localhost:%s", mockWebServer.getPort());
-		when(authClient.getClient()).thenReturn(WebClient.builder().baseUrl(baseUrl).build());
+		when(authClient.getClient()).thenReturn(Mono.just(WebClient.builder().baseUrl(baseUrl).build()));
 	}
 
 	@Test
