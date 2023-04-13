@@ -1,6 +1,5 @@
 package devs.mrp.springturkey.controllers;
 
-import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.when;
 
 import org.junit.jupiter.api.Test;
@@ -17,12 +16,16 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 
 import devs.mrp.springturkey.configuration.SecurityConfig;
 import devs.mrp.springturkey.controllers.dtos.UserDto;
+import devs.mrp.springturkey.exceptions.ClientRequestException;
+import devs.mrp.springturkey.exceptions.UnauthorizedException;
 import devs.mrp.springturkey.services.oauth.CreateUserCase;
+import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 
 @WebFluxTest(UserController.class)
 @Import(SecurityConfig.class)
 @EnableAutoConfiguration
+@Slf4j
 class UserControllerTest {
 
 	@Autowired
@@ -47,8 +50,33 @@ class UserControllerTest {
 	}
 
 	@Test
-	void errorCreatingUser() {
-		fail();
+	void errorCreatingUserFromClient() {
+		UserDto user = new UserDto("test@email.com");
+
+		Exception ex = new Exception("An error ocurred");
+		when(createUserCase.createUser(ArgumentMatchers.any(Mono.class))).thenReturn(Mono.error(new ClientRequestException()));
+
+		webClient.post()
+		.uri("/user/create")
+		.contentType(MediaType.APPLICATION_JSON)
+		.body(Mono.just(user), UserDto.class)
+		.exchange()
+		.expectStatus().is4xxClientError();
+	}
+
+	@Test
+	void errorCreatingUserFromServerCredentials() {
+		UserDto user = new UserDto("test@email.com");
+
+		Exception ex = new Exception("An error ocurred");
+		when(createUserCase.createUser(ArgumentMatchers.any(Mono.class))).thenReturn(Mono.error(new UnauthorizedException()));
+
+		webClient.post()
+		.uri("/user/create")
+		.contentType(MediaType.APPLICATION_JSON)
+		.body(Mono.just(user), UserDto.class)
+		.exchange()
+		.expectStatus().is5xxServerError();
 	}
 
 }

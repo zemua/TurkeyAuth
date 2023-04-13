@@ -9,10 +9,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import devs.mrp.springturkey.controllers.dtos.UserDto;
 import devs.mrp.springturkey.services.oauth.CreateUserCase;
+import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 
 @RestController
 @RequestMapping(path = "/user")
+@Slf4j
 public class UserController {
 
 	@Autowired
