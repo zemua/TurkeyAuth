@@ -13,7 +13,7 @@ public class AuthClientImpl implements AuthClient {
 	@Autowired
 	private WebClient.Builder clientBuilder;
 
-	@Value("${turkey.authScheme}")
+	@Value("${turkey.authscheme}")
 	private String authScheme;
 
 	@Value("${turkey.authport}")
@@ -22,10 +22,14 @@ public class AuthClientImpl implements AuthClient {
 	@Value("${turkey.authhost}")
 	private String authHost;
 
+	@Value("${turkey.authcontenttype}")
+	private String contentType;
+
 	@Override
 	public WebClient getClient() {
 		return clientBuilder
 				.baseUrl(authScheme + "://" + authHost + ":" + authPort)
+				.defaultHeader("Content-Type", contentType)
 				.build();
 	}
 

@@ -4,6 +4,7 @@ turkey:
   authscheme: http
   authport: 28080
   authhost: localhost
+  authcontenttype: application/json
   realm: Turkey
   authclient: turkeyTest
   authsecret: gYrhtCrDekDl0nkclhI1yjWN5dUqTbND
