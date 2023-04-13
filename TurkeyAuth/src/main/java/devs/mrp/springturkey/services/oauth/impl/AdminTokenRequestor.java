@@ -79,8 +79,8 @@ public class AdminTokenRequestor implements TokenRequestor {
 
 	private MultiValueMap<String, String> buildFormData() {
 		MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
-		formData.add("client_id", "client");
-		formData.add("client_secret", "secret");
+		formData.add("client_id", client);
+		formData.add("client_secret", secret);
 		formData.add("grant_type", "client_credentials");
 		return formData;
 	}

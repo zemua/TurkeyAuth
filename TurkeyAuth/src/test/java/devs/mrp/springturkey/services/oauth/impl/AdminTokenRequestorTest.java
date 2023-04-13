@@ -53,6 +53,7 @@ class AdminTokenRequestorTest {
 		assertEquals("POST", request.getMethod());
 		assertEquals("/auth/realms/Turkey/protocol/openid-connect/token", request.getPath());
 		assertEquals("application/x-www-form-urlencoded;charset=UTF-8", request.getHeader("Content-Type"));
+		assertEquals("client_id=turkeyTest&client_secret=gYrhtCrDekDl0nkclhI1yjWN5dUqTbND&grant_type=client_credentials", request.getBody().readUtf8());
 	}
 
 	private String sampleResponseBody() {
