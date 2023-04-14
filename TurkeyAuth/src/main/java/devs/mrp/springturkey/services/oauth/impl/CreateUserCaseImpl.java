@@ -14,6 +14,7 @@ import devs.mrp.springturkey.exceptions.ClientRequestException;
 import devs.mrp.springturkey.exceptions.KeycloakClientUnauthorizedException;
 import devs.mrp.springturkey.services.oauth.AuthClient;
 import devs.mrp.springturkey.services.oauth.CreateUserCase;
+import devs.mrp.springturkey.services.oauth.dtos.CreateUserDto;
 import reactor.core.publisher.Mono;
 
 @Service
@@ -29,19 +30,20 @@ public class CreateUserCaseImpl implements CreateUserCase {
 
 	@Override
 	public Mono<User> createUser(Mono<User> user) {
-		return user.flatMap(userValue -> execute(userValue));
+		return user.map(CreateUserDto::new)
+				.flatMap(this::execute);
 	}
 
-	private Mono<User> execute(User user) {
+	private Mono<User> execute(CreateUserDto user) {
 		return authClient.getClient()
 				.flatMap(client -> sendRequest(client, user));
 	}
 
-	private Mono<User> sendRequest(WebClient client, User user) {
+	private Mono<User> sendRequest(WebClient client, CreateUserDto user) {
 		return client.post()
 				.uri("/auth/admin/realms/" + realm + "/users")
 				.body(BodyInserters.fromValue(user))
-				.<User>exchangeToMono(response -> handleResponse(response, user));
+				.<User>exchangeToMono(response -> handleResponse(response, user.toUser()));
 	}
 
 	private Mono<User> handleResponse(ClientResponse response, User user) {
