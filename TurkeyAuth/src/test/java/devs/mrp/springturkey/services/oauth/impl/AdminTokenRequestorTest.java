@@ -14,9 +14,12 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import devs.mrp.springturkey.exceptions.TokenRetrievalException;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import okhttp3.mockwebserver.RecordedRequest;
+import reactor.core.publisher.Mono;
+import reactor.test.StepVerifier;
 
 @EnableAutoConfiguration
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -59,6 +62,27 @@ class AdminTokenRequestorTest {
 	private String sampleResponseBody() {
 		return "{\n"
 				+ "    \"access_token\": \"eyJhbGciOiJSUzI1Ni\",\n"
+				+ "    \"expires_in\": 300,\n"
+				+ "    \"refresh_expires_in\": 0,\n"
+				+ "    \"token_type\": \"Bearer\",\n"
+				+ "    \"not-before-policy\": 0,\n"
+				+ "    \"scope\": \"profile email\"\n"
+				+ "}";
+	}
+
+	@Test
+	void testExceptionOnNullToken() {
+		mockWebServer.enqueue(new MockResponse().setBody(noTokenResponseBody()).setHeader("Content-Type", "application/json"));
+
+		Mono<String> monoResult = adminTokenRequestor.getToken();
+
+		StepVerifier.create(monoResult)
+		.expectError(TokenRetrievalException.class)
+		.verify();
+	}
+
+	private String noTokenResponseBody() {
+		return "{\n"
 				+ "    \"expires_in\": 300,\n"
 				+ "    \"refresh_expires_in\": 0,\n"
 				+ "    \"token_type\": \"Bearer\",\n"

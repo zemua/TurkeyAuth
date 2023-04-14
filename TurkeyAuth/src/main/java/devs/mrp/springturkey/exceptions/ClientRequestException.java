@@ -21,4 +21,31 @@ public class ClientRequestException extends IOException {
 		this.response = response;
 	}
 
+	public ClientRequestException(HttpStatusCode response, String msg) {
+		super(msg);
+		this.response = response;
+	}
+
+	public ClientRequestException(HttpStatusCode response, String msg, Throwable cause) {
+		super(msg, cause);
+		this.response = response;
+	}
+
+	public ClientRequestException(HttpStatusCode response, Throwable cause) {
+		super(cause);
+		this.response = response;
+	}
+
+	public ClientRequestException(String msg) {
+		super(msg);
+	}
+
+	public ClientRequestException(String msg, Throwable cause) {
+		super(msg, cause);
+	}
+
+	public ClientRequestException(Throwable cause) {
+		super(cause);
+	}
+
 }

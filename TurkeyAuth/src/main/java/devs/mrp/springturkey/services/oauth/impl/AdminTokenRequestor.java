@@ -1,6 +1,7 @@
 package devs.mrp.springturkey.services.oauth.impl;
 
 import java.util.HashMap;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -52,7 +53,13 @@ public class AdminTokenRequestor implements TokenRequestor {
 	@Override
 	public Mono<String> getToken() {
 		return postQuery()
-				.map(hashMap -> hashMap.get(tokenProperty));
+				.flatMap(hashMap -> tokenFromMap(hashMap));
+	}
+
+	private Mono<String> tokenFromMap(HashMap<String,String> hashMap) {
+		return Optional.ofNullable(hashMap.get(tokenProperty))
+				.map(token -> Mono.just(token))
+				.orElse(Mono.error(new TokenRetrievalException("Token missing in origin's response")));
 	}
 
 	private Mono<HashMap<String,String>> postQuery() {
@@ -61,10 +68,7 @@ public class AdminTokenRequestor implements TokenRequestor {
 				.body(BodyInserters.fromFormData(buildFormData()))
 				.retrieve()
 				.bodyToMono(new ParameterizedTypeReference<HashMap<String,String>>(){})
-				.onErrorMap(e -> {
-					log.error("Error retrieving authorization token: ", e);
-					return new TokenRetrievalException();
-				});
+				.onErrorMap(e -> new TokenRetrievalException("Error retrieving authorization token", e));
 	}
 
 	private WebClient buildWebClient() {
