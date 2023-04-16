@@ -75,7 +75,7 @@ class CreateUserCaseImplTest {
 		RecordedRequest recordedRequest = mockWebServer.takeRequest();
 		assertEquals("POST", recordedRequest.getMethod());
 		assertEquals("/auth/admin/realms/Turkey/users", recordedRequest.getPath());
-		assertEquals("{\"email\":\"some@test.mail\",\"username\":\"some@test.mail\",\"credentials\":[{\"type\":\"password\",\"value\":\"mypassword\",\"temporary\":false}],\"requiredActions\":[\"VERIFY_EMAIL\"],\"enabled\":true}",
+		assertEquals("{\"email\":\"some@test.mail\",\"username\":\"some@test.mail\",\"credentials\":[{\"type\":\"password\",\"value\":\"mypassword\",\"temporary\":false}],\"requiredActions\":[\"VERIFY_EMAIL\"],\"enabled\":true,\"emailVerified\":false}",
 				recordedRequest.getBody().readUtf8());
 	}
 

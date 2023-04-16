@@ -14,11 +14,13 @@ public class CreateUserDto {
 	private List<Credentials> credentials;
 	private List<String> requiredActions;
 	private boolean enabled;
+	private boolean emailVerified;
 
 	public CreateUserDto(User user) {
 		this.email = user.getEmail();
 		this.username = user.getUsername();
 		this.enabled = true;
+		this.emailVerified = false;
 		this.credentials = List.of(Credentials.builder()
 				.type("password")
 				.value(user.getSecret())
