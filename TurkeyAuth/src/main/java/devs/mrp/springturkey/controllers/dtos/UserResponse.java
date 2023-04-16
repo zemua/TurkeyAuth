@@ -3,6 +3,7 @@ package devs.mrp.springturkey.controllers.dtos;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import devs.mrp.springturkey.entities.User;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -14,12 +15,13 @@ import lombok.Setter;
 @Getter
 @Setter
 @EqualsAndHashCode
-public class UserDto {
+public class UserResponse {
 
-	@JsonProperty
+	@JsonProperty("email")
+	@NotBlank
 	private String email;
 
-	public UserDto(User user) {
+	public UserResponse(User user) {
 		this.email = user.getEmail();
 	}
 

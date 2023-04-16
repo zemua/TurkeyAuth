@@ -19,7 +19,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import devs.mrp.springturkey.controllers.dtos.UserDto;
+import devs.mrp.springturkey.controllers.dtos.UserResponse;
 import devs.mrp.springturkey.entities.User;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
@@ -59,11 +59,11 @@ class CreateUserCaseImplTest {
 
 	@Test
 	void testCreateUser() throws InterruptedException, JsonProcessingException {
-		User user = User.builder().email("some@test.mail").username("some@test.mail").build();
+		User user = User.builder().email("some@test.mail").username("some@test.mail").secret("mypassword").build();
 
 		ObjectMapper objectMapper = new ObjectMapper();
 		mockWebServer.enqueue(new MockResponse()
-				.setBody(objectMapper.writeValueAsString(new UserDto(user)))
+				.setBody(objectMapper.writeValueAsString(new UserResponse(user)))
 				.addHeader("Content-Type", "application/json"));
 
 		Mono<User> userMono = userService.createUser(Mono.just(user));
@@ -75,7 +75,7 @@ class CreateUserCaseImplTest {
 		RecordedRequest recordedRequest = mockWebServer.takeRequest();
 		assertEquals("POST", recordedRequest.getMethod());
 		assertEquals("/auth/admin/realms/Turkey/users", recordedRequest.getPath());
-		assertEquals("{\"email\":\"some@test.mail\",\"username\":\"some@test.mail\",\"enabled\":true}", recordedRequest.getBody().readUtf8());
+		assertEquals("{\"email\":\"some@test.mail\",\"username\":\"some@test.mail\",\"credentials\":{\"type\":\"password\",\"value\":\"mypassword\",\"temporary\":false},\"enabled\":true}", recordedRequest.getBody().readUtf8());
 	}
 
 }

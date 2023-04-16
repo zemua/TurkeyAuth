@@ -1,7 +1,6 @@
 package devs.mrp.springturkey.entities;
 
-import org.springframework.lang.NonNull;
-
+import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -9,9 +8,10 @@ import lombok.Getter;
 @Builder
 public class User {
 
-	@NonNull
+	@NotBlank
 	private String username;
-	@NonNull
+	@NotBlank
 	private String email;
+	private String secret;
 
 }
