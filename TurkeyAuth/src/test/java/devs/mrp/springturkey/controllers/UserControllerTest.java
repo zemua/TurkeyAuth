@@ -46,7 +46,7 @@ class UserControllerTest {
 		.contentType(MediaType.APPLICATION_JSON)
 		.body(Mono.just(request), UserResponse.class)
 		.exchange()
-		.expectStatus().isOk()
+		.expectStatus().isEqualTo(201)
 		.expectBody(UserResponse.class)
 		.isEqualTo(response);
 	}
