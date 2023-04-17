@@ -3,6 +3,7 @@ package devs.mrp.springturkey.controllers.dtos;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import devs.mrp.springturkey.entities.User;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -19,6 +20,7 @@ public class UserRequest {
 
 	@JsonProperty("email")
 	@NotBlank
+	@Email
 	private String email;
 	@JsonProperty("secret")
 	@NotBlank
