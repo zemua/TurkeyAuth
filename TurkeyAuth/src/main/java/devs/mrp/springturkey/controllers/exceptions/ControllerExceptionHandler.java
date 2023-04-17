@@ -1,10 +1,12 @@
 package devs.mrp.springturkey.controllers.exceptions;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.support.WebExchangeBindException;
 import devs.mrp.springturkey.exceptions.ClientRequestException;
 import devs.mrp.springturkey.exceptions.KeycloakClientUnauthorizedException;
 import devs.mrp.springturkey.exceptions.TokenRetrievalException;
+import devs.mrp.springturkey.exceptions.dto.FieldErrorMessage;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 
@@ -43,8 +46,21 @@ public class ControllerExceptionHandler {
 	@ExceptionHandler(WebExchangeBindException.class)
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	@ResponseBody
-	public Mono<List<ObjectError>> processValidationError(WebExchangeBindException ex) {
-		return Mono.just(ex.getAllErrors());
+	public Mono<List<FieldErrorMessage>> processValidationError(WebExchangeBindException ex) {
+		List<FieldErrorMessage> errors = new ArrayList<>();
+		ex.getAllErrors().forEach(e -> addErrorToList(e, errors));
+		return Mono.just(errors);
+	}
+
+	private void addErrorToList(ObjectError error, List<FieldErrorMessage> errors) {
+		FieldErrorMessage result;
+		if (error instanceof FieldError) {
+			FieldError fieldError = (FieldError) error;
+			result = FieldErrorMessage.builder().fieldName(fieldError.getField()).errorMessage(fieldError.getDefaultMessage()).build();
+		} else {
+			result = FieldErrorMessage.builder().errorMessage(error.getDefaultMessage()).build();
+		}
+		errors.add(result);
 	}
 
 }

@@ -11,7 +11,7 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.ObjectError;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.support.WebExchangeBindException;
 
 import devs.mrp.springturkey.controllers.UserController;
@@ -19,6 +19,7 @@ import devs.mrp.springturkey.controllers.dtos.UserRequest;
 import devs.mrp.springturkey.exceptions.ClientRequestException;
 import devs.mrp.springturkey.exceptions.KeycloakClientUnauthorizedException;
 import devs.mrp.springturkey.exceptions.TokenRetrievalException;
+import devs.mrp.springturkey.exceptions.dto.FieldErrorMessage;
 import reactor.core.publisher.Mono;
 
 class ControllerExceptionHandlerTest {
@@ -65,10 +66,10 @@ class ControllerExceptionHandlerTest {
 		BindingResult result = new BeanPropertyBindingResult(request, "myRequest");
 
 		WebExchangeBindException ex = new WebExchangeBindException(parameter, result);
-		ex.addError(new ObjectError("secret", "Shall not be empty"));
+		ex.addError(new FieldError("UserObject", "secret", "Shall not be empty"));
 
-		List<ObjectError> errors = controllerExceptionHandler.processValidationError(ex).block();
-		assertEquals("[Error in object 'secret': codes []; arguments []; default message [Shall not be empty]]", errors.toString());
+		List<FieldErrorMessage> errors = controllerExceptionHandler.processValidationError(ex).block();
+		assertEquals("[FieldErrorMessage(fieldName=secret, errorMessage=Shall not be empty)]", errors.toString());
 	}
 
 }
