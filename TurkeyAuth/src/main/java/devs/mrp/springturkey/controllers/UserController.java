@@ -26,7 +26,6 @@ public class UserController {
 
 	@PostMapping("/create")
 	public Mono<ResponseEntity<UserResponse>> create(@Valid @RequestBody Mono<UserRequest> data) {
-		// TODO customize validation error message sent on the json
 		return createUserCase.createUser(data.map(userDto -> userDto.toUser()))
 				.map(user -> ResponseEntity.status(201).body(new UserResponse(user)));
 	}
