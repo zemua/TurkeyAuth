@@ -1,14 +1,22 @@
 package devs.mrp.springturkey.controllers.exceptions;
 
+import java.util.List;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.bind.support.WebExchangeBindException;
 
 import devs.mrp.springturkey.exceptions.ClientRequestException;
 import devs.mrp.springturkey.exceptions.KeycloakClientUnauthorizedException;
 import devs.mrp.springturkey.exceptions.TokenRetrievalException;
 import lombok.extern.slf4j.Slf4j;
+import reactor.core.publisher.Mono;
 
 @RestControllerAdvice
 @Slf4j
@@ -28,8 +36,15 @@ public class ControllerExceptionHandler {
 
 	@ExceptionHandler(TokenRetrievalException.class)
 	public ResponseEntity<?> handleTokenRetrievalException(TokenRetrievalException ex) {
-		log.error("Handling expceiont: ", ex);
+		log.error("Handling expception: ", ex);
 		return ResponseEntity.status(HttpStatusCode.valueOf(523)).build();
+	}
+
+	@ExceptionHandler(WebExchangeBindException.class)
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	@ResponseBody
+	public Mono<List<ObjectError>> processValidationError(WebExchangeBindException ex) {
+		return Mono.just(ex.getAllErrors());
 	}
 
 }
