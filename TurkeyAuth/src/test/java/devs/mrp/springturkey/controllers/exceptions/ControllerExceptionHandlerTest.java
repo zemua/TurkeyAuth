@@ -17,6 +17,7 @@ import org.springframework.web.bind.support.WebExchangeBindException;
 import devs.mrp.springturkey.controllers.UserController;
 import devs.mrp.springturkey.controllers.dtos.UserRequest;
 import devs.mrp.springturkey.exceptions.ClientRequestException;
+import devs.mrp.springturkey.exceptions.GetUserInfoException;
 import devs.mrp.springturkey.exceptions.KeycloakClientUnauthorizedException;
 import devs.mrp.springturkey.exceptions.TokenRetrievalException;
 import devs.mrp.springturkey.exceptions.dto.FieldErrorMessage;
@@ -57,6 +58,13 @@ class ControllerExceptionHandlerTest {
 		TokenRetrievalException ex = new TokenRetrievalException();
 		ResponseEntity<?> response = controllerExceptionHandler.handleTokenRetrievalException(ex);
 		assertEquals(523, response.getStatusCode().value());
+	}
+
+	@Test
+	void testHandleGetUserInfoException() {
+		GetUserInfoException ex = new GetUserInfoException();
+		String response = controllerExceptionHandler.handleGetUserInfoException(ex).block();
+		assertEquals("Error getting user information", response);
 	}
 
 	@Test

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.bind.support.WebExchangeBindException;
 
 import devs.mrp.springturkey.exceptions.ClientRequestException;
+import devs.mrp.springturkey.exceptions.GetUserInfoException;
 import devs.mrp.springturkey.exceptions.KeycloakClientUnauthorizedException;
 import devs.mrp.springturkey.exceptions.TokenRetrievalException;
 import devs.mrp.springturkey.exceptions.dto.FieldErrorMessage;
@@ -41,6 +42,14 @@ public class ControllerExceptionHandler {
 	public ResponseEntity<?> handleTokenRetrievalException(TokenRetrievalException ex) {
 		log.error("Handling expception: ", ex);
 		return ResponseEntity.status(HttpStatusCode.valueOf(523)).build();
+	}
+
+	@ExceptionHandler(GetUserInfoException.class)
+	@ResponseStatus(HttpStatus.FAILED_DEPENDENCY)
+	@ResponseBody
+	public Mono<String> handleGetUserInfoException(GetUserInfoException ex) {
+		log.error("Handling exception: ", ex);
+		return Mono.just("Error getting user information");
 	}
 
 	@ExceptionHandler(WebExchangeBindException.class)

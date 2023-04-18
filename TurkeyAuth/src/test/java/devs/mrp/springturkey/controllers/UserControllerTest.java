@@ -1,5 +1,7 @@
 package devs.mrp.springturkey.controllers;
 
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import org.junit.jupiter.api.Test;
@@ -20,6 +22,8 @@ import devs.mrp.springturkey.controllers.dtos.UserResponse;
 import devs.mrp.springturkey.exceptions.ClientRequestException;
 import devs.mrp.springturkey.exceptions.KeycloakClientUnauthorizedException;
 import devs.mrp.springturkey.services.oauth.CreateUserCase;
+import devs.mrp.springturkey.services.oauth.UserInfoCase;
+import devs.mrp.springturkey.services.oauth.dtos.UserInfoDto;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 
@@ -33,13 +37,17 @@ class UserControllerTest {
 	private WebTestClient webClient;
 	@MockBean
 	private CreateUserCase createUserCase;
+	@MockBean
+	private UserInfoCase userInfoCase;
 
 	@Test
 	void testCreateUser() throws JsonProcessingException, Exception {
 		UserResponse response = new UserResponse("test@email.com");
 		UserRequest request = new UserRequest("test@email.com", "mysecret");
+		UserInfoDto userInfo = UserInfoDto.builder().id("asdas").username("qweqw").email("some@email.com").build();
 
 		when(createUserCase.createUser(ArgumentMatchers.any(Mono.class))).thenReturn(Mono.just(response.toUser()));
+		when(userInfoCase.getUserInfo(ArgumentMatchers.any())).thenReturn(Mono.just(userInfo));
 
 		webClient.post()
 		.uri("/user/create")
@@ -49,6 +57,8 @@ class UserControllerTest {
 		.expectStatus().isEqualTo(201)
 		.expectBody(UserResponse.class)
 		.isEqualTo(response);
+
+		verify(userInfoCase, times(1)).getUserInfo(ArgumentMatchers.any());
 	}
 
 	@Test
