@@ -4,6 +4,7 @@ import java.util.Arrays;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import devs.mrp.springturkey.anotations.TurkeySecret;
 import devs.mrp.springturkey.entities.User;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -25,7 +26,7 @@ public class UserRequest {
 	@Email
 	private String email;
 	@JsonProperty("secret")
-	@NotBlank
+	@TurkeySecret
 	private char[] secret;
 
 	public UserRequest(User user) {
