@@ -1,6 +1,5 @@
 package devs.mrp.springturkey.services.oauth.impl;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.BodyInserters;
@@ -13,7 +12,6 @@ import devs.mrp.springturkey.entities.User;
 import devs.mrp.springturkey.exceptions.ClientRequestException;
 import devs.mrp.springturkey.exceptions.KeycloakClientUnauthorizedException;
 import devs.mrp.springturkey.exceptions.TurkeyGenericException;
-import devs.mrp.springturkey.services.oauth.AuthClient;
 import devs.mrp.springturkey.services.oauth.CreateUserCase;
 import devs.mrp.springturkey.services.oauth.dtos.CreateUserDto;
 import lombok.extern.slf4j.Slf4j;
@@ -23,23 +21,15 @@ import reactor.core.publisher.Mono;
 @Slf4j
 public class CreateUserCaseImpl implements CreateUserCase {
 
-	@Autowired
-	private AuthClient authClient;
-
 	@Value("${turkey.realm}")
 	private String realm;
 
 	private ObjectMapper objectMapper = new ObjectMapper();
 
 	@Override
-	public Mono<User> createUser(Mono<User> user) {
+	public Mono<User> createUser(Mono<User> user, WebClient webClient) {
 		return user.map(CreateUserDto::new)
-				.flatMap(this::execute);
-	}
-
-	private Mono<User> execute(CreateUserDto user) {
-		return authClient.getClient()
-				.flatMap(client -> sendRequest(client, user));
+				.flatMap(u -> sendRequest(webClient, u));
 	}
 
 	private Mono<User> sendRequest(WebClient client, CreateUserDto user) {

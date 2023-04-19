@@ -1,7 +1,6 @@
 package devs.mrp.springturkey.services.oauth.impl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 
@@ -12,7 +11,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -24,13 +22,12 @@ import reactor.test.StepVerifier;
 
 @EnableAutoConfiguration
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ContextConfiguration(classes = { VerifyEmailCaseImpl.class, AuthClientImpl.class })
+@ContextConfiguration(classes = { VerifyEmailCaseImpl.class })
 class VerifyEmailCaseImplTest {
 
 	private static MockWebServer mockWebServer;
 
-	@MockBean
-	private AuthClientImpl authClient;
+	private WebClient webClient;
 
 	@Autowired
 	private VerifyEmailCaseImpl verifyEmailCase;
@@ -49,7 +46,7 @@ class VerifyEmailCaseImplTest {
 	@BeforeEach
 	void initialize() {
 		String baseUrl = String.format("http://localhost:%s", mockWebServer.getPort());
-		when(authClient.getClient()).thenReturn(Mono.just(WebClient.builder().baseUrl(baseUrl).build()));
+		webClient = WebClient.builder().baseUrl(baseUrl).build();
 	}
 
 	@Test
@@ -59,7 +56,7 @@ class VerifyEmailCaseImplTest {
 		mockWebServer.enqueue(new MockResponse()
 				.setResponseCode(204));
 
-		Mono<String> monoResult = verifyEmailCase.sendVerifyEmail(Mono.just(userId));
+		Mono<String> monoResult = verifyEmailCase.sendVerifyEmail(Mono.just(userId), webClient);
 
 		StepVerifier.create(monoResult)
 		.expectNextMatches(r -> r.equals(userId))

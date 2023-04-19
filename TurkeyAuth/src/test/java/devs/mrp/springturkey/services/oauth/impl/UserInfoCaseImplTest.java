@@ -1,7 +1,6 @@
 package devs.mrp.springturkey.services.oauth.impl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.util.List;
@@ -13,7 +12,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -29,13 +27,12 @@ import reactor.test.StepVerifier;
 
 @EnableAutoConfiguration
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ContextConfiguration(classes = { UserInfoCaseImpl.class, AuthClientImpl.class })
+@ContextConfiguration(classes = { UserInfoCaseImpl.class })
 class UserInfoCaseImplTest {
 
 	private static MockWebServer mockWebServer;
 
-	@MockBean
-	private AuthClientImpl authClient;
+	private WebClient webClient;
 
 	@Autowired
 	private UserInfoCaseImpl userInfoService;
@@ -54,7 +51,7 @@ class UserInfoCaseImplTest {
 	@BeforeEach
 	void initialize() {
 		String baseUrl = String.format("http://localhost:%s", mockWebServer.getPort());
-		when(authClient.getClient()).thenReturn(Mono.just(WebClient.builder().baseUrl(baseUrl).build()));
+		webClient = WebClient.builder().baseUrl(baseUrl).build();
 	}
 
 	@Test
@@ -74,7 +71,7 @@ class UserInfoCaseImplTest {
 				.setBody(objectMapper.writeValueAsString(userInfo))
 				.addHeader("Content-Type", "application/json"));
 
-		Mono<UserInfoDto> userInfoMono = userInfoService.getUserInfo(Mono.just("some@email.com"));
+		Mono<UserInfoDto> userInfoMono = userInfoService.getUserInfo(Mono.just("some@email.com"), webClient);
 
 		StepVerifier.create(userInfoMono)
 		.expectNextMatches(result -> result.equals(userInfo))

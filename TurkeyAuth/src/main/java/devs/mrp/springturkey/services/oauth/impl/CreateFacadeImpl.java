@@ -2,8 +2,10 @@ package devs.mrp.springturkey.services.oauth.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import devs.mrp.springturkey.entities.User;
+import devs.mrp.springturkey.services.oauth.AuthClient;
 import devs.mrp.springturkey.services.oauth.CreateFacade;
 import devs.mrp.springturkey.services.oauth.CreateUserCase;
 import devs.mrp.springturkey.services.oauth.UserInfoCase;
@@ -21,18 +23,26 @@ public class CreateFacadeImpl implements CreateFacade {
 	private UserInfoCase userInfoCase;
 	@Autowired
 	private VerifyEmailCase verifyEmailCase;
+	@Autowired
+	private AuthClient authClient;
 
 	@Override
 	public Mono<User> execute(Mono<User> user) {
-		return createUserCase.createUser(user)
-				.doOnNext(u -> log.info("Created user: {}", u))
-				.doOnNext(this::postCreateProcess);
+		return authClient.getClient()
+				.flatMap(client -> createUser(client, user));
+
 	}
 
-	private void postCreateProcess(User user) {
-		userInfoCase.getUserInfo(Mono.just(user.getEmail()))
+	private Mono<User> createUser(WebClient client, Mono<User> user) {
+		return createUserCase.createUser(user, client)
+				.doOnNext(u -> log.info("Created user: {}", u))
+				.doOnNext(u -> postCreateProcess(u, client));
+	}
+
+	private void postCreateProcess(User user, WebClient client) {
+		userInfoCase.getUserInfo(Mono.just(user.getEmail()), client)
 		.doOnNext(userInfoDto -> log.info("To send verification email for: {}", userInfoDto))
-		.flatMap(userInfo -> verifyEmailCase.sendVerifyEmail(Mono.just(userInfo.getId())))
+		.flatMap(userInfo -> verifyEmailCase.sendVerifyEmail(Mono.just(userInfo.getId()), client))
 		.subscribe();
 	}
 
