@@ -21,9 +21,7 @@ import devs.mrp.springturkey.controllers.dtos.UserRequest;
 import devs.mrp.springturkey.controllers.dtos.UserResponse;
 import devs.mrp.springturkey.exceptions.ClientRequestException;
 import devs.mrp.springturkey.exceptions.KeycloakClientUnauthorizedException;
-import devs.mrp.springturkey.services.oauth.CreateUserCase;
-import devs.mrp.springturkey.services.oauth.UserInfoCase;
-import devs.mrp.springturkey.services.oauth.dtos.UserInfoDto;
+import devs.mrp.springturkey.services.oauth.CreateFacade;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 
@@ -36,18 +34,14 @@ class UserControllerTest {
 	@Autowired
 	private WebTestClient webClient;
 	@MockBean
-	private CreateUserCase createUserCase;
-	@MockBean
-	private UserInfoCase userInfoCase;
+	private CreateFacade createFacade;
 
 	@Test
 	void testCreateUser() throws JsonProcessingException, Exception {
 		UserResponse response = new UserResponse("test@email.com");
 		UserRequest request = new UserRequest("test@email.com", "mysecret");
-		UserInfoDto userInfo = UserInfoDto.builder().id("asdas").username("qweqw").email("some@email.com").build();
 
-		when(createUserCase.createUser(ArgumentMatchers.any(Mono.class))).thenReturn(Mono.just(response.toUser()));
-		when(userInfoCase.getUserInfo(ArgumentMatchers.any())).thenReturn(Mono.just(userInfo));
+		when(createFacade.execute(ArgumentMatchers.any())).thenReturn(Mono.just(request.toUser()));
 
 		webClient.post()
 		.uri("/user/create")
@@ -58,7 +52,7 @@ class UserControllerTest {
 		.expectBody(UserResponse.class)
 		.isEqualTo(response);
 
-		verify(userInfoCase, times(1)).getUserInfo(ArgumentMatchers.any());
+		verify(createFacade, times(1)).execute(ArgumentMatchers.any());
 	}
 
 	@Test
@@ -66,7 +60,7 @@ class UserControllerTest {
 		UserRequest request = new UserRequest("test@email.com", "mysecret");
 
 		Exception ex = new Exception("An error ocurred");
-		when(createUserCase.createUser(ArgumentMatchers.any(Mono.class))).thenReturn(Mono.error(new ClientRequestException()));
+		when(createFacade.execute(ArgumentMatchers.any(Mono.class))).thenReturn(Mono.error(new ClientRequestException()));
 
 		webClient.post()
 		.uri("/user/create")
@@ -81,7 +75,7 @@ class UserControllerTest {
 		UserRequest request = new UserRequest("test@email.com", "mysecret");
 
 		Exception ex = new Exception("An error ocurred");
-		when(createUserCase.createUser(ArgumentMatchers.any(Mono.class))).thenReturn(Mono.error(new KeycloakClientUnauthorizedException()));
+		when(createFacade.execute(ArgumentMatchers.any(Mono.class))).thenReturn(Mono.error(new KeycloakClientUnauthorizedException()));
 
 		webClient.post()
 		.uri("/user/create")

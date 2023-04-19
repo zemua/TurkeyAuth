@@ -3,10 +3,14 @@ package devs.mrp.springturkey.entities;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.ToString;
 
 @Getter
 @Builder
+@EqualsAndHashCode
+@ToString
 public class User {
 
 	@NotBlank
@@ -14,6 +18,7 @@ public class User {
 	@NotBlank
 	@Email
 	private String email;
+	@ToString.Exclude
 	private String secret;
 
 }
