@@ -12,6 +12,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import devs.mrp.springturkey.entities.User;
 import devs.mrp.springturkey.exceptions.ClientRequestException;
 import devs.mrp.springturkey.exceptions.KeycloakClientUnauthorizedException;
+import devs.mrp.springturkey.exceptions.TurkeyGenericException;
 import devs.mrp.springturkey.services.oauth.AuthClient;
 import devs.mrp.springturkey.services.oauth.CreateUserCase;
 import devs.mrp.springturkey.services.oauth.dtos.CreateUserDto;
@@ -57,7 +58,7 @@ public class CreateUserCaseImpl implements CreateUserCase {
 			return Mono.error(new ClientRequestException(response.statusCode()));
 		} else {
 			return response.createException()
-					.flatMap(Mono::error);
+					.flatMap(ex -> Mono.error(new TurkeyGenericException(ex)));
 		}
 	}
 

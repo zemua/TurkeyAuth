@@ -19,7 +19,9 @@ import devs.mrp.springturkey.controllers.dtos.UserRequest;
 import devs.mrp.springturkey.exceptions.ClientRequestException;
 import devs.mrp.springturkey.exceptions.GetUserInfoException;
 import devs.mrp.springturkey.exceptions.KeycloakClientUnauthorizedException;
+import devs.mrp.springturkey.exceptions.SendVerificationMailException;
 import devs.mrp.springturkey.exceptions.TokenRetrievalException;
+import devs.mrp.springturkey.exceptions.TurkeyGenericException;
 import devs.mrp.springturkey.exceptions.dto.FieldErrorMessage;
 import reactor.core.publisher.Mono;
 
@@ -30,6 +32,14 @@ class ControllerExceptionHandlerTest {
 	@BeforeEach
 	void setup() {
 		controllerExceptionHandler = new ControllerExceptionHandler();
+	}
+
+	@Test
+	void testTurkeyGenericException() {
+		TurkeyGenericException ex = new TurkeyGenericException();
+		ResponseEntity<?> response = controllerExceptionHandler.handleTurkeyGenericException(ex);
+		assertEquals(520, response.getStatusCode().value());
+		assertEquals("An error has ocurred processing the request", response.getBody());
 	}
 
 	@Test
@@ -65,6 +75,13 @@ class ControllerExceptionHandlerTest {
 		GetUserInfoException ex = new GetUserInfoException();
 		String response = controllerExceptionHandler.handleGetUserInfoException(ex).block();
 		assertEquals("Error getting user information", response);
+	}
+
+	@Test
+	void testHandleSendVerificationMailException() {
+		SendVerificationMailException ex = new SendVerificationMailException();
+		String response = controllerExceptionHandler.handleSendVerificationMailException(ex).block();
+		assertEquals("Error sending verification email", response);
 	}
 
 	@Test

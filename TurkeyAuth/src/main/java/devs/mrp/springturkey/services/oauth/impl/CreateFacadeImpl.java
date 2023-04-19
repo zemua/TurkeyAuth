@@ -7,6 +7,7 @@ import devs.mrp.springturkey.entities.User;
 import devs.mrp.springturkey.services.oauth.CreateFacade;
 import devs.mrp.springturkey.services.oauth.CreateUserCase;
 import devs.mrp.springturkey.services.oauth.UserInfoCase;
+import devs.mrp.springturkey.services.oauth.VerifyEmailCase;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 
@@ -18,6 +19,8 @@ public class CreateFacadeImpl implements CreateFacade {
 	private CreateUserCase createUserCase;
 	@Autowired
 	private UserInfoCase userInfoCase;
+	@Autowired
+	private VerifyEmailCase verifyEmailCase;
 
 	@Override
 	public Mono<User> execute(Mono<User> user) {
@@ -28,7 +31,8 @@ public class CreateFacadeImpl implements CreateFacade {
 
 	private void postCreateProcess(User user) {
 		userInfoCase.getUserInfo(Mono.just(user.getEmail()))
-		.doOnNext(userInfoDto -> log.info("To send verification email for: {}", userInfoDto)) // TODO send verification email
+		.doOnNext(userInfoDto -> log.info("To send verification email for: {}", userInfoDto))
+		.flatMap(userInfo -> verifyEmailCase.sendVerifyEmail(Mono.just(userInfo.getId())))
 		.subscribe();
 	}
 

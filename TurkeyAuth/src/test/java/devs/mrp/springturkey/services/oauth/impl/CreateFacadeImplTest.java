@@ -18,6 +18,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import devs.mrp.springturkey.entities.User;
 import devs.mrp.springturkey.services.oauth.CreateUserCase;
 import devs.mrp.springturkey.services.oauth.UserInfoCase;
+import devs.mrp.springturkey.services.oauth.VerifyEmailCase;
 import devs.mrp.springturkey.services.oauth.dtos.UserInfoDto;
 import reactor.core.publisher.Mono;
 
@@ -28,15 +29,19 @@ class CreateFacadeImplTest {
 	private CreateUserCase createUserCase;
 	@Mock
 	private UserInfoCase userInfoCase;
+	@Mock
+	private VerifyEmailCase verifyEmailCase;
 
 	@InjectMocks
 	private CreateFacadeImpl createFacadeImpl;
 
 	@Captor
-	private ArgumentCaptor<Mono<String>> stringCaptor;
+	private ArgumentCaptor<Mono<String>> userInfoArgumentCaptor;
+	@Captor
+	private ArgumentCaptor<Mono<String>> verifyMailArgumentCaptor;
 
 	@Test
-	void test() {
+	void testSuccess() {
 		User user = User.builder().email("some@email.com").secret("pass").build();
 		UserInfoDto userInfoDto = UserInfoDto.builder().id("someid").build();
 		Mono<User> monoUser = Mono.just(user);
@@ -45,6 +50,7 @@ class CreateFacadeImplTest {
 
 		when(createUserCase.createUser(monoUser)).thenReturn(monoUser);
 		when(userInfoCase.getUserInfo(ArgumentMatchers.any())).thenReturn(monoUserInfo);
+		when(verifyEmailCase.sendVerifyEmail(ArgumentMatchers.any())).thenReturn(Mono.just("someid"));
 
 		User result = createFacadeImpl.execute(monoUser).block();
 
@@ -52,8 +58,11 @@ class CreateFacadeImplTest {
 
 		verify(createUserCase, times(1)).createUser(Mockito.eq(monoUser));
 
-		verify(userInfoCase, times(1)).getUserInfo(stringCaptor.capture());
-		assertEquals("some@email.com", stringCaptor.getValue().block());
+		verify(userInfoCase, times(1)).getUserInfo(userInfoArgumentCaptor.capture());
+		assertEquals("some@email.com", userInfoArgumentCaptor.getValue().block());
+
+		verify(verifyEmailCase, times(1)).sendVerifyEmail(verifyMailArgumentCaptor.capture());
+		assertEquals("someid", verifyMailArgumentCaptor.getValue().block());
 	}
 
 }

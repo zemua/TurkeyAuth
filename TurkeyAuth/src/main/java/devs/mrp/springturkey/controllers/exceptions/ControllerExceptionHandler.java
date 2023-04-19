@@ -17,7 +17,9 @@ import org.springframework.web.bind.support.WebExchangeBindException;
 import devs.mrp.springturkey.exceptions.ClientRequestException;
 import devs.mrp.springturkey.exceptions.GetUserInfoException;
 import devs.mrp.springturkey.exceptions.KeycloakClientUnauthorizedException;
+import devs.mrp.springturkey.exceptions.SendVerificationMailException;
 import devs.mrp.springturkey.exceptions.TokenRetrievalException;
+import devs.mrp.springturkey.exceptions.TurkeyGenericException;
 import devs.mrp.springturkey.exceptions.dto.FieldErrorMessage;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
@@ -25,6 +27,13 @@ import reactor.core.publisher.Mono;
 @RestControllerAdvice
 @Slf4j
 public class ControllerExceptionHandler {
+
+	@ExceptionHandler(TurkeyGenericException.class)
+	public ResponseEntity<?> handleTurkeyGenericException(TurkeyGenericException ex) {
+		log.error("Handling exception: ", ex);
+		return ResponseEntity.status(HttpStatusCode.valueOf(520))
+				.body("An error has ocurred processing the request");
+	}
 
 	@ExceptionHandler(KeycloakClientUnauthorizedException.class)
 	public ResponseEntity<?> handleKeycloakClientUnauthorizedException(KeycloakClientUnauthorizedException ex) {
@@ -50,6 +59,14 @@ public class ControllerExceptionHandler {
 	public Mono<String> handleGetUserInfoException(GetUserInfoException ex) {
 		log.error("Handling exception: ", ex);
 		return Mono.just("Error getting user information");
+	}
+
+	@ExceptionHandler(SendVerificationMailException.class)
+	@ResponseStatus(HttpStatus.FAILED_DEPENDENCY)
+	@ResponseBody
+	public Mono<String> handleSendVerificationMailException(SendVerificationMailException ex) {
+		log.error("Handling exception: ", ex);
+		return Mono.just("Error sending verification email");
 	}
 
 	@ExceptionHandler(WebExchangeBindException.class)
