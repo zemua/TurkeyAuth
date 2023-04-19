@@ -12,7 +12,7 @@ import jakarta.validation.Payload;
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface TurkeySecret {
-	String message() default "Invalid password";
+	String message() default "Invalid password, it must be at least 8 characters long and contain at least a lower-case letter, an upper-case letter, a number and a symbol";
 	Class<?>[] groups() default {};
 	Class<? extends Payload>[] payload() default {};
 }
