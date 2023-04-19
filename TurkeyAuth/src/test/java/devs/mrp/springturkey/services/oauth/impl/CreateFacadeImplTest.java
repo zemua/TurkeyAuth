@@ -42,7 +42,8 @@ class CreateFacadeImplTest {
 
 	@Test
 	void testSuccess() {
-		User user = User.builder().email("some@email.com").secret("pass").build();
+		char[] secret = {'p','a','s','s'};
+		User user = User.builder().email("some@email.com").secret(secret).build();
 		UserInfoDto userInfoDto = UserInfoDto.builder().id("someid").build();
 		Mono<User> monoUser = Mono.just(user);
 		Mono<String> monoMail = Mono.just("some@email.com");

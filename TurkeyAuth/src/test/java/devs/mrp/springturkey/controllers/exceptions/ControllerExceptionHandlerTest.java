@@ -87,7 +87,8 @@ class ControllerExceptionHandlerTest {
 	@Test
 	void testProcessValidationError() throws NoSuchMethodException, SecurityException {
 		MethodParameter parameter = new MethodParameter(UserController.class.getMethod("create", Mono.class), 0);
-		UserRequest request = new UserRequest("some@email.com", "");
+		char[] secret = {};
+		UserRequest request = new UserRequest("some@email.com", secret);
 		BindingResult result = new BeanPropertyBindingResult(request, "myRequest");
 
 		WebExchangeBindException ex = new WebExchangeBindException(parameter, result);

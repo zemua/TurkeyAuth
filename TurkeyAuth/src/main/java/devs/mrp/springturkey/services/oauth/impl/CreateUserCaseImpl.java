@@ -46,7 +46,7 @@ public class CreateUserCaseImpl implements CreateUserCase {
 		return client.post()
 				.uri("/auth/admin/realms/" + realm + "/users")
 				.body(BodyInserters.fromValue(user))
-				.<User>exchangeToMono(response -> handleResponse(response, user.toUser()));
+				.<User>exchangeToMono(response -> handleResponse(response, user.toUserWithoutSecret()));
 	}
 
 	private Mono<User> handleResponse(ClientResponse response, User user) {

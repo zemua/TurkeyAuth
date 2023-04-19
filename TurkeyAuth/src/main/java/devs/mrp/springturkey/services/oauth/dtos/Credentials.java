@@ -12,7 +12,7 @@ public class Credentials {
 	@JsonProperty
 	String type;
 	@JsonProperty
-	String value;
+	char[] value;
 	@JsonProperty
 	boolean temporary;
 

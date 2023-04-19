@@ -39,7 +39,8 @@ class UserControllerTest {
 	@Test
 	void testCreateUser() throws JsonProcessingException, Exception {
 		UserResponse response = new UserResponse("test@email.com");
-		UserRequest request = new UserRequest("test@email.com", "mysecret");
+		char[] secret = {'m','y','s','e','c','r','e','t'};
+		UserRequest request = new UserRequest("test@email.com", secret);
 
 		when(createFacade.execute(ArgumentMatchers.any())).thenReturn(Mono.just(request.toUser()));
 
@@ -57,7 +58,8 @@ class UserControllerTest {
 
 	@Test
 	void errorCreatingUserFromClient() {
-		UserRequest request = new UserRequest("test@email.com", "mysecret");
+		char[] secret = {'m','y','s','e','c','r','e','t'};
+		UserRequest request = new UserRequest("test@email.com", secret);
 
 		Exception ex = new Exception("An error ocurred");
 		when(createFacade.execute(ArgumentMatchers.any(Mono.class))).thenReturn(Mono.error(new ClientRequestException()));
@@ -72,7 +74,8 @@ class UserControllerTest {
 
 	@Test
 	void errorCreatingUserFromServerCredentials() {
-		UserRequest request = new UserRequest("test@email.com", "mysecret");
+		char[] secret = {'m','y','s','e','c','r','e','t'};
+		UserRequest request = new UserRequest("test@email.com", secret);
 
 		Exception ex = new Exception("An error ocurred");
 		when(createFacade.execute(ArgumentMatchers.any(Mono.class))).thenReturn(Mono.error(new KeycloakClientUnauthorizedException()));

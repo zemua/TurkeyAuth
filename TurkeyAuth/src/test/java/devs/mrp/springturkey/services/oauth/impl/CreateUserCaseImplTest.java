@@ -59,7 +59,8 @@ class CreateUserCaseImplTest {
 
 	@Test
 	void testCreateUser() throws InterruptedException, JsonProcessingException {
-		User user = User.builder().email("some@test.mail").username("some@test.mail").secret("mypassword").build();
+		char[] secret = {'m','y','p','a','s','s','w','o','r','d'};
+		User user = User.builder().email("some@test.mail").username("some@test.mail").secret(secret).build();
 
 		ObjectMapper objectMapper = new ObjectMapper();
 		mockWebServer.enqueue(new MockResponse()

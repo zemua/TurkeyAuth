@@ -1,5 +1,7 @@
 package devs.mrp.springturkey.controllers.dtos;
 
+import java.util.Arrays;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import devs.mrp.springturkey.entities.User;
@@ -24,19 +26,25 @@ public class UserRequest {
 	private String email;
 	@JsonProperty("secret")
 	@NotBlank
-	private String secret;
+	private char[] secret;
 
 	public UserRequest(User user) {
 		this.email = user.getEmail();
-		this.secret = user.getSecret();
+		this.secret = user.getSecret().clone();
+
+		Arrays.fill(user.getSecret(), '0');
 	}
 
 	public User toUser() {
-		return User.builder()
+		User result = User.builder()
 				.email(this.email)
 				.username(this.email)
-				.secret(this.secret)
+				.secret(this.secret.clone())
 				.build();
+
+		Arrays.fill(this.secret, '0');
+
+		return result;
 	}
 
 }

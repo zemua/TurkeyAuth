@@ -19,6 +19,6 @@ public class User {
 	@Email
 	private String email;
 	@ToString.Exclude
-	private String secret;
+	private char[] secret;
 
 }
