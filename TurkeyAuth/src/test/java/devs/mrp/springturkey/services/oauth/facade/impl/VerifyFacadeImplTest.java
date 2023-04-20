@@ -16,11 +16,13 @@ import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import devs.mrp.springturkey.exceptions.NonExistingTurkeyUserException;
 import devs.mrp.springturkey.services.oauth.AuthClient;
 import devs.mrp.springturkey.services.oauth.UserInfoCase;
 import devs.mrp.springturkey.services.oauth.VerifyEmailCase;
 import devs.mrp.springturkey.services.oauth.dtos.UserInfoDto;
 import reactor.core.publisher.Mono;
+import reactor.test.StepVerifier;
 
 @ExtendWith(SpringExtension.class)
 class VerifyFacadeImplTest {
@@ -61,6 +63,24 @@ class VerifyFacadeImplTest {
 
 		verify(verifyEmailCase, times(1)).sendVerifyEmail(verifyMailArgumentCaptor.capture(), ArgumentMatchers.any());
 		assertEquals("someid", verifyMailArgumentCaptor.getValue().block());
+	}
+
+	@Test
+	void testEmptyUser() {
+		String email = "test@email.com";
+		Mono<String> monoMail = Mono.just(email);
+		UserInfoDto userInfoDto = UserInfoDto.builder().id("someid").build();
+		Mono<UserInfoDto> monoUserInfo = Mono.just(userInfoDto);
+		WebClient client = mock(WebClient.class);
+
+		when(authClient.getClient()).thenReturn(Mono.just(client));
+		when(userInfoCase.getUserInfo(ArgumentMatchers.any(), ArgumentMatchers.any(WebClient.class))).thenReturn(Mono.empty());
+		when(verifyEmailCase.sendVerifyEmail(ArgumentMatchers.any(), ArgumentMatchers.any(WebClient.class))).thenReturn(Mono.just("someid"));
+
+		Mono<String> monoResult = verifyFacade.execute(monoMail);
+		StepVerifier.create(monoResult)
+		.expectError(NonExistingTurkeyUserException.class)
+		.verify();
 	}
 
 }
