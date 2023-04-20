@@ -20,6 +20,7 @@ import devs.mrp.springturkey.controllers.handlers.ControllerExceptionHandler;
 import devs.mrp.springturkey.exceptions.ClientRequestException;
 import devs.mrp.springturkey.exceptions.GetUserInfoException;
 import devs.mrp.springturkey.exceptions.KeycloakClientUnauthorizedException;
+import devs.mrp.springturkey.exceptions.NonExistingTurkeyUserException;
 import devs.mrp.springturkey.exceptions.SendVerificationMailException;
 import devs.mrp.springturkey.exceptions.TokenRetrievalException;
 import devs.mrp.springturkey.exceptions.TurkeyGenericException;
@@ -97,6 +98,13 @@ class ControllerExceptionHandlerTest {
 
 		List<FieldErrorMessage> errors = controllerExceptionHandler.processValidationError(ex).block();
 		assertEquals("[FieldErrorMessage(fieldName=secret, errorMessage=Shall not be empty)]", errors.toString());
+	}
+
+	@Test
+	void testHandleNonExistingUserException() {
+		NonExistingTurkeyUserException ex = new NonExistingTurkeyUserException("Some message");
+		String response = controllerExceptionHandler.handleNonExistingUserException(ex).block();
+		assertEquals("Some message", response);
 	}
 
 }

@@ -17,6 +17,7 @@ import org.springframework.web.bind.support.WebExchangeBindException;
 import devs.mrp.springturkey.exceptions.ClientRequestException;
 import devs.mrp.springturkey.exceptions.GetUserInfoException;
 import devs.mrp.springturkey.exceptions.KeycloakClientUnauthorizedException;
+import devs.mrp.springturkey.exceptions.NonExistingTurkeyUserException;
 import devs.mrp.springturkey.exceptions.SendVerificationMailException;
 import devs.mrp.springturkey.exceptions.TokenRetrievalException;
 import devs.mrp.springturkey.exceptions.TurkeyGenericException;
@@ -87,6 +88,22 @@ public class ControllerExceptionHandler {
 			result = FieldErrorMessage.builder().errorMessage(error.getDefaultMessage()).build();
 		}
 		errors.add(result);
+	}
+
+	@ExceptionHandler(NonExistingTurkeyUserException.class)
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	@ResponseBody
+	public Mono<String> handleNonExistingUserException(NonExistingTurkeyUserException ex) {
+		log.error("Handling exception: ", ex);
+		return Mono.just(ex.getMessage());
+	}
+
+	@ExceptionHandler(Exception.class)
+	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+	@ResponseBody
+	public Mono<String> handleGenericException(Exception ex) {
+		log.error("Handling uncatch exception: ", ex);
+		return Mono.just("Internal server error");
 	}
 
 }
