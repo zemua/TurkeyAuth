@@ -1,4 +1,4 @@
-package devs.mrp.springturkey.services.oauth.impl;
+package devs.mrp.springturkey.services.oauth.facade.impl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
@@ -13,24 +13,18 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import devs.mrp.springturkey.entities.User;
 import devs.mrp.springturkey.services.oauth.AuthClient;
-import devs.mrp.springturkey.services.oauth.CreateUserCase;
 import devs.mrp.springturkey.services.oauth.UserInfoCase;
 import devs.mrp.springturkey.services.oauth.VerifyEmailCase;
 import devs.mrp.springturkey.services.oauth.dtos.UserInfoDto;
-import devs.mrp.springturkey.services.oauth.facade.impl.CreateFacadeImpl;
 import reactor.core.publisher.Mono;
 
 @ExtendWith(SpringExtension.class)
-class CreateFacadeImplTest {
+class VerifyFacadeImplTest {
 
-	@Mock
-	private CreateUserCase createUserCase;
 	@Mock
 	private UserInfoCase userInfoCase;
 	@Mock
@@ -39,7 +33,7 @@ class CreateFacadeImplTest {
 	private AuthClient authClient;
 
 	@InjectMocks
-	private CreateFacadeImpl createFacadeImpl;
+	private VerifyFacadeImpl verifyFacade;
 
 	@Captor
 	private ArgumentCaptor<Mono<String>> userInfoArgumentCaptor;
@@ -48,27 +42,22 @@ class CreateFacadeImplTest {
 
 	@Test
 	void testSuccess() {
-		char[] secret = {'p','a','s','s'};
-		User user = User.builder().email("some@email.com").secret(secret).build();
+		String email = "test@email.com";
+		Mono<String> monoMail = Mono.just(email);
 		UserInfoDto userInfoDto = UserInfoDto.builder().id("someid").build();
-		Mono<User> monoUser = Mono.just(user);
-		Mono<String> monoMail = Mono.just("some@email.com");
 		Mono<UserInfoDto> monoUserInfo = Mono.just(userInfoDto);
 		WebClient client = mock(WebClient.class);
 
 		when(authClient.getClient()).thenReturn(Mono.just(client));
-		when(createUserCase.createUser(monoUser, client)).thenReturn(monoUser);
 		when(userInfoCase.getUserInfo(ArgumentMatchers.any(), ArgumentMatchers.any(WebClient.class))).thenReturn(monoUserInfo);
 		when(verifyEmailCase.sendVerifyEmail(ArgumentMatchers.any(), ArgumentMatchers.any(WebClient.class))).thenReturn(Mono.just("someid"));
 
-		User result = createFacadeImpl.execute(monoUser).block();
+		String result = verifyFacade.execute(monoMail).block();
 
-		assertEquals(user, result);
-
-		verify(createUserCase, times(1)).createUser(Mockito.eq(monoUser), ArgumentMatchers.any(WebClient.class));
+		assertEquals("someid", result);
 
 		verify(userInfoCase, times(1)).getUserInfo(userInfoArgumentCaptor.capture(), ArgumentMatchers.any());
-		assertEquals("some@email.com", userInfoArgumentCaptor.getValue().block());
+		assertEquals("test@email.com", userInfoArgumentCaptor.getValue().block());
 
 		verify(verifyEmailCase, times(1)).sendVerifyEmail(verifyMailArgumentCaptor.capture(), ArgumentMatchers.any());
 		assertEquals("someid", verifyMailArgumentCaptor.getValue().block());

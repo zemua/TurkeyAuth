@@ -1,4 +1,4 @@
-package devs.mrp.springturkey.services.oauth.impl;
+package devs.mrp.springturkey.services.oauth.facade.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -6,10 +6,10 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 import devs.mrp.springturkey.entities.User;
 import devs.mrp.springturkey.services.oauth.AuthClient;
-import devs.mrp.springturkey.services.oauth.CreateFacade;
 import devs.mrp.springturkey.services.oauth.CreateUserCase;
 import devs.mrp.springturkey.services.oauth.UserInfoCase;
 import devs.mrp.springturkey.services.oauth.VerifyEmailCase;
+import devs.mrp.springturkey.services.oauth.facade.CreateFacade;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 

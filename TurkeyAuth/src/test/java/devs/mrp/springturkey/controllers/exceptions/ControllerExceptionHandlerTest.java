@@ -16,6 +16,7 @@ import org.springframework.web.bind.support.WebExchangeBindException;
 
 import devs.mrp.springturkey.controllers.UserController;
 import devs.mrp.springturkey.controllers.dtos.UserRequest;
+import devs.mrp.springturkey.controllers.handlers.ControllerExceptionHandler;
 import devs.mrp.springturkey.exceptions.ClientRequestException;
 import devs.mrp.springturkey.exceptions.GetUserInfoException;
 import devs.mrp.springturkey.exceptions.KeycloakClientUnauthorizedException;

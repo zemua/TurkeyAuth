@@ -15,6 +15,7 @@ public class SecurityConfig {
 		return http
 				.authorizeExchange()
 				.pathMatchers("/user/create").permitAll()
+				.pathMatchers("/user/verify").permitAll()
 				.anyExchange().authenticated()
 				.and().csrf().disable()
 				.build();

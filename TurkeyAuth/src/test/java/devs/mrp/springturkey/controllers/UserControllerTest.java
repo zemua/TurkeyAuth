@@ -13,15 +13,18 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import org.springframework.web.reactive.function.BodyInserters;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import devs.mrp.springturkey.configuration.SecurityConfig;
+import devs.mrp.springturkey.controllers.dtos.EmailEntity;
 import devs.mrp.springturkey.controllers.dtos.UserRequest;
 import devs.mrp.springturkey.controllers.dtos.UserResponse;
 import devs.mrp.springturkey.exceptions.ClientRequestException;
 import devs.mrp.springturkey.exceptions.KeycloakClientUnauthorizedException;
-import devs.mrp.springturkey.services.oauth.CreateFacade;
+import devs.mrp.springturkey.services.oauth.facade.CreateFacade;
+import devs.mrp.springturkey.services.oauth.facade.VerifyFacade;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 
@@ -35,6 +38,8 @@ class UserControllerTest {
 	private WebTestClient webClient;
 	@MockBean
 	private CreateFacade createFacade;
+	@MockBean
+	private VerifyFacade verifyFacade;
 
 	@Test
 	void testCreateUser() throws JsonProcessingException, Exception {
@@ -86,6 +91,24 @@ class UserControllerTest {
 		.body(Mono.just(request), UserResponse.class)
 		.exchange()
 		.expectStatus().is5xxServerError();
+	}
+
+	@Test
+	void sendVerifyEmail() {
+		EmailEntity email = new EmailEntity("test@email.com");
+
+		when(verifyFacade.execute(ArgumentMatchers.any())).thenReturn(Mono.just("someid"));
+
+		webClient.put()
+		.uri("/user/verify")
+		.contentType(MediaType.APPLICATION_JSON)
+		.body(BodyInserters.fromValue(email))
+		.exchange()
+		.expectStatus().isEqualTo(201)
+		.expectBody(String.class)
+		.isEqualTo("someid");
+
+		verify(verifyFacade, times(1)).execute(ArgumentMatchers.any());
 	}
 
 }
