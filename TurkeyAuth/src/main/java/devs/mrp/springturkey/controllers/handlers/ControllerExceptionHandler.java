@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -96,6 +97,14 @@ public class ControllerExceptionHandler {
 	public Mono<String> handleNonExistingUserException(NonExistingTurkeyUserException ex) {
 		log.error("Handling exception: ", ex);
 		return Mono.just(ex.getMessage());
+	}
+
+	@ExceptionHandler(AccessDeniedException.class)
+	@ResponseStatus(HttpStatus.UNAUTHORIZED)
+	@ResponseBody
+	public Mono<String> handleAccessDeniedException(AccessDeniedException ex) {
+		log.error("Handling exception: ", ex);
+		return Mono.just("Access denied");
 	}
 
 	@ExceptionHandler(Exception.class)
