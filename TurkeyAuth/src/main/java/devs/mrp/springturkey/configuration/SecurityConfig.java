@@ -1,5 +1,6 @@
 package devs.mrp.springturkey.configuration;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
@@ -10,13 +11,19 @@ import org.springframework.security.web.server.SecurityWebFilterChain;
 @EnableWebFluxSecurity
 public class SecurityConfig {
 
+	@Value("${jwk.endpoint}")
+	private String jwkEndpoint;
+
 	@Bean
 	public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
-		return http
-				.authorizeExchange()
-				.anyExchange().authenticated()
-				.and().csrf().disable()
-				.build();
+		http
+		.authorizeExchange()
+		.anyExchange().authenticated()
+		.and().csrf().disable();
+
+		http.oauth2ResourceServer().jwt();
+
+		return http.build();
 	}
 
 }

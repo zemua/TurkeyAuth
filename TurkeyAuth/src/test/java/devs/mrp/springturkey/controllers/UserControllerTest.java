@@ -38,7 +38,7 @@ class UserControllerTest {
 	private VerifyFacade verifyFacade;
 
 	@Test
-	@WithMockUser(authorities = "create_user")
+	@WithMockUser(authorities = "SCOPE_create_user")
 	void testCreateUser() throws JsonProcessingException, Exception {
 		UserResponse response = new UserResponse("test@email.com");
 		char[] secret = {'m','y','s','e','c','r','e','t'};
@@ -59,7 +59,7 @@ class UserControllerTest {
 	}
 
 	@Test
-	@WithMockUser(authorities = "create_user")
+	@WithMockUser(authorities = "SCOPE_create_user")
 	void errorCreatingUserFromClient() {
 		char[] secret = {'m','y','s','e','c','r','e','t'};
 		UserRequest request = new UserRequest("test@email.com", secret);
@@ -76,7 +76,7 @@ class UserControllerTest {
 	}
 
 	@Test
-	@WithMockUser(authorities = "create_user")
+	@WithMockUser(authorities = "SCOPE_create_user")
 	void errorCreatingUserFromServerCredentials() {
 		char[] secret = {'m','y','s','e','c','r','e','t'};
 		UserRequest request = new UserRequest("test@email.com", secret);
@@ -93,7 +93,7 @@ class UserControllerTest {
 	}
 
 	@Test
-	@WithMockUser(authorities = "send_verify")
+	@WithMockUser(authorities = "SCOPE_send_verify")
 	void sendVerifyEmail() {
 		EmailEntity email = new EmailEntity("test@email.com");
 

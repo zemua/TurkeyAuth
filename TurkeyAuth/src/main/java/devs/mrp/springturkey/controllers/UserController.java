@@ -31,14 +31,14 @@ public class UserController {
 	private VerifyFacade verifyFacade;
 
 	@PostMapping("/create")
-	@PreAuthorize("hasAuthority('create_user')")
+	@PreAuthorize("hasAuthority('SCOPE_create_user')")
 	public Mono<ResponseEntity<UserResponse>> create(@Valid @RequestBody Mono<UserRequest> data) {
 		return createFacade.execute(data.map(userDto -> userDto.toUser()))
 				.map(user -> ResponseEntity.status(201).body(new UserResponse(user)));
 	}
 
 	@PutMapping("/verify")
-	@PreAuthorize("hasAuthority('send_verify')")
+	@PreAuthorize("hasAuthority('SCOPE_send_verify')")
 	public Mono<ResponseEntity<String>> verify(@Valid @RequestBody EmailEntity email) {
 		return verifyFacade.execute(Mono.just(email.getEmail()))
 				.map(mail -> ResponseEntity.status(201).body(mail));

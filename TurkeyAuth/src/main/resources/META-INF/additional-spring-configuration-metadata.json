@@ -63,5 +63,10 @@
     "name": "turkey.credentialtype",
     "type": "java.lang.String",
     "description": "A description for 'turkey.credentialtype'"
+  },
+  {
+    "name": "jwk.issuer",
+    "type": "java.lang.String",
+    "description": "A description for 'jwk.issuer'"
   }
 ]}
