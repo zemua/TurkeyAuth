@@ -43,4 +43,4 @@ spring:
       on-profile: debug
 logging:
   level:
-    root: DEBUG
+    root: TRACE
