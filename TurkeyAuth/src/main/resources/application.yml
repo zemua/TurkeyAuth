@@ -35,3 +35,12 @@ spring:
             user-info-uri: ${turkey.authscheme}://${turkey.authhost}:${turkey.authport}/auth/realms/${turkey.realm}/protocol/openid-connect/userinfo
             user-name-attribute: preferred_username
             jwk-set-uri: ${turkey.authscheme}://${turkey.authhost}:${turkey.authport}/auth/realms/${turkey.realm}/protocol/openid-connect/certs
+
+---
+spring:
+  config:
+    activate:
+      on-profile: debug
+logging:
+  level:
+    root: DEBUG
