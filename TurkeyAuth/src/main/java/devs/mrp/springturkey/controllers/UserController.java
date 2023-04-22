@@ -14,6 +14,7 @@ import devs.mrp.springturkey.controllers.dtos.EmailEntity;
 import devs.mrp.springturkey.controllers.dtos.UserRequest;
 import devs.mrp.springturkey.controllers.dtos.UserResponse;
 import devs.mrp.springturkey.services.oauth.facade.CreateFacade;
+import devs.mrp.springturkey.services.oauth.facade.UpdatePassFacade;
 import devs.mrp.springturkey.services.oauth.facade.VerifyFacade;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +30,8 @@ public class UserController {
 	private CreateFacade createFacade;
 	@Autowired
 	private VerifyFacade verifyFacade;
+	@Autowired
+	private UpdatePassFacade updatePassFacade;
 
 	@PostMapping("/create")
 	@PreAuthorize("hasAuthority('SCOPE_create_user')")
@@ -41,7 +44,14 @@ public class UserController {
 	@PreAuthorize("hasAuthority('SCOPE_send_verify')")
 	public Mono<ResponseEntity<String>> verify(@Valid @RequestBody EmailEntity email) {
 		return verifyFacade.execute(Mono.just(email.getEmail()))
-				.map(mail -> ResponseEntity.status(201).body(mail));
+				.map(userId -> ResponseEntity.status(201).body(userId));
+	}
+
+	@PutMapping("/password")
+	@PreAuthorize("hasAuthority('SCOPE_send_update_password')")
+	public Mono<ResponseEntity<String>> updatePassword(@Valid @RequestBody EmailEntity email) {
+		return updatePassFacade.execute(Mono.just(email.getEmail()))
+				.map(userId -> ResponseEntity.status(201).body(userId));
 	}
 
 }

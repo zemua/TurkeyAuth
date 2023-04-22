@@ -23,6 +23,7 @@ import devs.mrp.springturkey.controllers.dtos.UserResponse;
 import devs.mrp.springturkey.exceptions.ClientRequestException;
 import devs.mrp.springturkey.exceptions.KeycloakClientUnauthorizedException;
 import devs.mrp.springturkey.services.oauth.facade.CreateFacade;
+import devs.mrp.springturkey.services.oauth.facade.UpdatePassFacade;
 import devs.mrp.springturkey.services.oauth.facade.VerifyFacade;
 import reactor.core.publisher.Mono;
 
@@ -36,6 +37,8 @@ class UserControllerTest {
 	private CreateFacade createFacade;
 	@MockBean
 	private VerifyFacade verifyFacade;
+	@MockBean
+	private UpdatePassFacade updatePassFacade;
 
 	@Test
 	@WithMockUser(authorities = "SCOPE_create_user")
@@ -112,6 +115,25 @@ class UserControllerTest {
 	}
 
 	@Test
+	@WithMockUser(authorities = "SCOPE_send_update_password")
+	void sendUpdatePassword() {
+		EmailEntity email = new EmailEntity("test@email.com");
+
+		when(updatePassFacade.execute(ArgumentMatchers.any())).thenReturn(Mono.just("someid"));
+
+		webClient.put()
+		.uri("/user/password")
+		.contentType(MediaType.APPLICATION_JSON)
+		.body(BodyInserters.fromValue(email))
+		.exchange()
+		.expectStatus().isEqualTo(201)
+		.expectBody(String.class)
+		.isEqualTo("someid");
+
+		verify(updatePassFacade, times(1)).execute(ArgumentMatchers.any());
+	}
+
+	@Test
 	@WithMockUser
 	void testNoAuthorityCreateFails() throws JsonProcessingException, Exception {
 		UserResponse response = new UserResponse("test@email.com");
@@ -133,6 +155,19 @@ class UserControllerTest {
 
 		webClient.put()
 		.uri("/user/verify")
+		.contentType(MediaType.APPLICATION_JSON)
+		.body(BodyInserters.fromValue(email))
+		.exchange()
+		.expectStatus().isEqualTo(401);
+	}
+
+	@Test
+	@WithMockUser
+	void testNoAuthoritySendUpdatePassword() {
+		EmailEntity email = new EmailEntity("test@email.com");
+
+		webClient.put()
+		.uri("/user/password")
 		.contentType(MediaType.APPLICATION_JSON)
 		.body(BodyInserters.fromValue(email))
 		.exchange()
