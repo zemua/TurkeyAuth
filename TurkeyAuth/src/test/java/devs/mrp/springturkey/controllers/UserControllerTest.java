@@ -126,7 +126,7 @@ class UserControllerTest {
 		.contentType(MediaType.APPLICATION_JSON)
 		.body(BodyInserters.fromValue(email))
 		.exchange()
-		.expectStatus().isEqualTo(201)
+		.expectStatus().isEqualTo(200)
 		.expectBody(String.class)
 		.isEqualTo("someid");
 

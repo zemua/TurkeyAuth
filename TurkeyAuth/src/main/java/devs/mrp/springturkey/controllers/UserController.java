@@ -51,7 +51,7 @@ public class UserController {
 	@PreAuthorize("hasAuthority('SCOPE_send_update_password')")
 	public Mono<ResponseEntity<String>> updatePassword(@Valid @RequestBody EmailEntity email) {
 		return updatePassFacade.execute(Mono.just(email.getEmail()))
-				.map(userId -> ResponseEntity.status(201).body(userId));
+				.map(userId -> ResponseEntity.status(200).body(userId));
 	}
 
 }
