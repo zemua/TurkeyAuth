@@ -14,6 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import devs.mrp.springturkey.services.oauth.factory.impl.EmailSenderFactoryImpl;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import okhttp3.mockwebserver.RecordedRequest;
@@ -22,15 +23,15 @@ import reactor.test.StepVerifier;
 
 @EnableAutoConfiguration
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ContextConfiguration(classes = { ChangePasswordCaseImpl.class })
-class ChangePasswordCaseImplTest {
+@ContextConfiguration(classes = { EmailSenderFactoryImpl.class })
+class SendEmailCaseImplTest {
 
 	private static MockWebServer mockWebServer;
 
 	private WebClient webClient;
 
 	@Autowired
-	private ChangePasswordCaseImpl changePasswordCase;
+	private EmailSenderFactoryImpl emailSenderFactory;
 
 	@BeforeAll
 	static void setup() throws IOException {
@@ -56,7 +57,7 @@ class ChangePasswordCaseImplTest {
 		mockWebServer.enqueue(new MockResponse()
 				.setResponseCode(204));
 
-		Mono<String> monoResult = changePasswordCase.sendChangePassword(Mono.just(userId), webClient);
+		Mono<String> monoResult = emailSenderFactory.get(EmailCommand.UPDATE_PASSWORD).execute(Mono.just(userId), webClient);
 
 		StepVerifier.create(monoResult)
 		.expectNextMatches(r -> r.equals(userId))

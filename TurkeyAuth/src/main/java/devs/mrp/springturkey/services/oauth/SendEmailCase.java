@@ -4,8 +4,8 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 import reactor.core.publisher.Mono;
 
-public interface ChangePasswordCase {
+public interface SendEmailCase {
 
-	public Mono<String> sendChangePassword(Mono<String> userId, WebClient client);
+	public Mono<String> execute(Mono<String> userId, WebClient client);
 
 }

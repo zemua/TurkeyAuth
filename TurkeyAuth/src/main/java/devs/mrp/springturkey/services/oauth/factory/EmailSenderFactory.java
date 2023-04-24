@@ -1,9 +1,10 @@
 package devs.mrp.springturkey.services.oauth.factory;
 
-import reactor.core.publisher.Mono;
+import devs.mrp.springturkey.services.oauth.SendEmailCase;
+import devs.mrp.springturkey.services.oauth.impl.EmailCommand;
 
 public interface EmailSenderFactory {
 
-	public SendEmailCase get(Mono<String> userId); // TODO modify ChangePasswordCase to SendEmailCase and set the method "send" to accept an ENUM with the action
+	public SendEmailCase get(EmailCommand command);
 
 }
