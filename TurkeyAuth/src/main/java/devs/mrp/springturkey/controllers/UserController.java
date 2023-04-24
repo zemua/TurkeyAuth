@@ -1,6 +1,7 @@
 package devs.mrp.springturkey.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
@@ -11,19 +12,20 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import devs.mrp.springturkey.controllers.dtos.EmailEntity;
+import devs.mrp.springturkey.controllers.dtos.TurkeyCredentialsDto;
 import devs.mrp.springturkey.controllers.dtos.UserRequest;
 import devs.mrp.springturkey.controllers.dtos.UserResponse;
+import devs.mrp.springturkey.controllers.dtos.UserTokenDto;
+import devs.mrp.springturkey.services.oauth.RequestForwarder;
 import devs.mrp.springturkey.services.oauth.facade.CreateFacade;
 import devs.mrp.springturkey.services.oauth.facade.UpdatePassFacade;
 import devs.mrp.springturkey.services.oauth.facade.VerifyFacade;
 import jakarta.validation.Valid;
-import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 
 @RestController
 @RequestMapping(path = "/user")
 @Validated
-@Slf4j
 public class UserController {
 
 	@Autowired
@@ -32,6 +34,9 @@ public class UserController {
 	private VerifyFacade verifyFacade;
 	@Autowired
 	private UpdatePassFacade updatePassFacade;
+	@Autowired
+	@Qualifier("token")
+	private RequestForwarder<TurkeyCredentialsDto, UserTokenDto> requestForwarder;
 
 	@PostMapping("/create")
 	@PreAuthorize("hasAuthority('SCOPE_create_user')")
@@ -52,6 +57,11 @@ public class UserController {
 	public Mono<ResponseEntity<String>> updatePassword(@Valid @RequestBody EmailEntity email) {
 		return updatePassFacade.execute(Mono.just(email.getEmail()))
 				.map(userId -> ResponseEntity.status(200).body(userId));
+	}
+
+	@PostMapping("/token")
+	public Mono<ResponseEntity<UserTokenDto>> redirectToToken(@Valid @RequestBody Mono<TurkeyCredentialsDto> credentials) {
+		return requestForwarder.forward(credentials);
 	}
 
 }
