@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 @Getter
-public class UserTokenDto {
+public class ClientTokenDto {
 
 	@JsonProperty("access_token")
 	private char[] accessToken;
@@ -19,14 +19,10 @@ public class UserTokenDto {
 	private int expiresIn;
 	@JsonProperty("refresh_expires_in")
 	private int refreshTokenExpiresIn;
-	@JsonProperty("refresh_token")
-	private char[] refreshToken;
 	@JsonProperty("token_type")
 	private String tokenType;
 	@JsonProperty("not-before-policy")
 	private int notBeforePolicy;
-	@JsonProperty("session_state")
-	private String sessionState;
 	@JsonProperty("scope")
 	private String scope;
 

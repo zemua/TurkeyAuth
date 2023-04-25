@@ -6,6 +6,6 @@ import reactor.core.publisher.Mono;
 
 public interface RequestForwarder<I, O> {
 
-	public Mono<ResponseEntity<O>> forward(Mono<I> element);
+	public Mono<ResponseEntity<O>> forward(Mono<I> request, Class<O> outputClazz);
 
 }

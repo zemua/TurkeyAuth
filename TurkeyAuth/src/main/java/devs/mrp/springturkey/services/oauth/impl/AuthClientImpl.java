@@ -8,6 +8,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 import devs.mrp.springturkey.services.oauth.AuthClient;
 import devs.mrp.springturkey.services.oauth.TokenRequestor;
+import devs.mrp.springturkey.services.oauth.factory.BaseUrlProvider;
 import reactor.core.publisher.Mono;
 
 @Component
@@ -31,19 +32,18 @@ public class AuthClientImpl implements AuthClient {
 	@Autowired
 	private TokenRequestor adminTokenRequestor;
 
+	@Autowired
+	private BaseUrlProvider baseUrlProvider;
+
 	@Override
 	public Mono<WebClient> getClient() {
 		return adminTokenRequestor.getToken()
 				.map(token -> buildAuthorizedClient(token));
 	}
 
-	private String resolveBaseUrl() {
-		return authScheme + "://" + authHost + ":" + authPort;
-	}
-
 	private WebClient buildAuthorizedClient(String token) {
 		return clientBuilder
-				.baseUrl(resolveBaseUrl())
+				.baseUrl(baseUrlProvider.resolveBaseUrl())
 				.defaultHeaders(httpHeaders -> {
 					httpHeaders.set(HttpHeaders.CONTENT_TYPE, contentType);
 					httpHeaders.set(HttpHeaders.AUTHORIZATION, "Bearer " + token);

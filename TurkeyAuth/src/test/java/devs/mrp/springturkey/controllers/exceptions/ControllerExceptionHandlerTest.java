@@ -14,7 +14,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.support.WebExchangeBindException;
 
-import devs.mrp.springturkey.controllers.UserController;
+import devs.mrp.springturkey.controllers.ClientController;
 import devs.mrp.springturkey.controllers.dtos.UserRequest;
 import devs.mrp.springturkey.controllers.handlers.ControllerExceptionHandler;
 import devs.mrp.springturkey.exceptions.ClientRequestException;
@@ -88,7 +88,7 @@ class ControllerExceptionHandlerTest {
 
 	@Test
 	void testProcessValidationError() throws NoSuchMethodException, SecurityException {
-		MethodParameter parameter = new MethodParameter(UserController.class.getMethod("create", Mono.class), 0);
+		MethodParameter parameter = new MethodParameter(ClientController.class.getMethod("create", Mono.class), 0);
 		char[] secret = {};
 		UserRequest request = new UserRequest("some@email.com", secret);
 		BindingResult result = new BeanPropertyBindingResult(request, "myRequest");

@@ -18,6 +18,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import devs.mrp.springturkey.services.oauth.TokenRequestor;
+import devs.mrp.springturkey.services.oauth.factory.BaseUrlProvider;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import okhttp3.mockwebserver.RecordedRequest;
@@ -32,6 +33,8 @@ class AuthClientImplTest {
 	private MockWebServer mockWebServer;
 	@Autowired
 	private AuthClientImpl authClient;
+	@MockBean
+	private BaseUrlProvider baseUrlProvider;
 	@MockBean
 	private TokenRequestor adminTokenRequestor;
 
@@ -52,6 +55,7 @@ class AuthClientImplTest {
 	void testCall() throws InterruptedException {
 		mockWebServer.enqueue(new MockResponse().setBody("Hello world!"));
 		when(adminTokenRequestor.getToken()).thenReturn(Mono.just("someToken"));
+		when(baseUrlProvider.resolveBaseUrl()).thenReturn("http://localhost:" + mockWebServer.getPort());
 
 		WebClient client = authClient.getClient().block();
 		client.get()

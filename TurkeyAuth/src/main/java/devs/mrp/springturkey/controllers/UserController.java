@@ -3,23 +3,16 @@ package devs.mrp.springturkey.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import devs.mrp.springturkey.controllers.dtos.EmailEntity;
-import devs.mrp.springturkey.controllers.dtos.TurkeyCredentialsDto;
-import devs.mrp.springturkey.controllers.dtos.UserRequest;
-import devs.mrp.springturkey.controllers.dtos.UserResponse;
+import devs.mrp.springturkey.controllers.dtos.RefreshCredentialsDto;
+import devs.mrp.springturkey.controllers.dtos.UserCredentialsDto;
 import devs.mrp.springturkey.controllers.dtos.UserTokenDto;
 import devs.mrp.springturkey.services.oauth.RequestForwarder;
-import devs.mrp.springturkey.services.oauth.facade.CreateFacade;
-import devs.mrp.springturkey.services.oauth.facade.UpdatePassFacade;
-import devs.mrp.springturkey.services.oauth.facade.VerifyFacade;
 import jakarta.validation.Valid;
 import reactor.core.publisher.Mono;
 
@@ -29,39 +22,21 @@ import reactor.core.publisher.Mono;
 public class UserController {
 
 	@Autowired
-	private CreateFacade createFacade;
-	@Autowired
-	private VerifyFacade verifyFacade;
-	@Autowired
-	private UpdatePassFacade updatePassFacade;
+	@Qualifier("token")
+	private RequestForwarder<UserCredentialsDto, UserTokenDto> tokenRequestForwarder;
+
 	@Autowired
 	@Qualifier("token")
-	private RequestForwarder<TurkeyCredentialsDto, UserTokenDto> requestForwarder;
-
-	@PostMapping("/create")
-	@PreAuthorize("hasAuthority('SCOPE_create_user')")
-	public Mono<ResponseEntity<UserResponse>> create(@Valid @RequestBody Mono<UserRequest> data) {
-		return createFacade.execute(data.map(userDto -> userDto.toUser()))
-				.map(user -> ResponseEntity.status(201).body(new UserResponse(user)));
-	}
-
-	@PutMapping("/verify")
-	@PreAuthorize("hasAuthority('SCOPE_send_verify')")
-	public Mono<ResponseEntity<String>> verify(@Valid @RequestBody EmailEntity email) {
-		return verifyFacade.execute(Mono.just(email.getEmail()))
-				.map(userId -> ResponseEntity.status(201).body(userId));
-	}
-
-	@PutMapping("/password")
-	@PreAuthorize("hasAuthority('SCOPE_send_update_password')")
-	public Mono<ResponseEntity<String>> updatePassword(@Valid @RequestBody EmailEntity email) {
-		return updatePassFacade.execute(Mono.just(email.getEmail()))
-				.map(userId -> ResponseEntity.status(200).body(userId));
-	}
+	private RequestForwarder<RefreshCredentialsDto, UserTokenDto> refreshRequestForwarder;
 
 	@PostMapping("/token")
-	public Mono<ResponseEntity<UserTokenDto>> redirectToToken(@Valid @RequestBody Mono<TurkeyCredentialsDto> credentials) {
-		return requestForwarder.forward(credentials);
+	public Mono<ResponseEntity<UserTokenDto>> forwardToToken(@Valid @RequestBody Mono<UserCredentialsDto> credentials) {
+		return tokenRequestForwarder.forward(credentials, UserTokenDto.class);
+	}
+
+	@PostMapping("/refresh")
+	public Mono<ResponseEntity<UserTokenDto>> forwardToRefresh(@Valid @RequestBody Mono<RefreshCredentialsDto> credentials) {
+		return refreshRequestForwarder.forward(credentials, UserTokenDto.class);
 	}
 
 }

@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 @Getter
-public class TurkeyCredentialsDto {
+public class RefreshCredentialsDto {
 
 	@JsonProperty("client_id")
 	private String clientId;
@@ -19,5 +19,7 @@ public class TurkeyCredentialsDto {
 	private char[] clientSecret;
 	@JsonProperty("grant_type")
 	private String grantType;
+	@JsonProperty("refresh_token")
+	private char[] refreshToken;
 
 }
