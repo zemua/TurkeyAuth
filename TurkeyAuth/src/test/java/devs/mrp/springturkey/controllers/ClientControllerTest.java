@@ -1,6 +1,5 @@
 package devs.mrp.springturkey.controllers;
 
-import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -108,7 +107,7 @@ class ClientControllerTest {
 		.contentType(MediaType.APPLICATION_JSON)
 		.body(BodyInserters.fromValue(email))
 		.exchange()
-		.expectStatus().isEqualTo(201)
+		.expectStatus().isEqualTo(200)
 		.expectBody(String.class)
 		.isEqualTo("someid");
 
@@ -173,11 +172,6 @@ class ClientControllerTest {
 		.body(BodyInserters.fromValue(email))
 		.exchange()
 		.expectStatus().isEqualTo(401);
-	}
-
-	@Test
-	void testForwardToToken() {
-		fail("Not yet implemented");
 	}
 
 }

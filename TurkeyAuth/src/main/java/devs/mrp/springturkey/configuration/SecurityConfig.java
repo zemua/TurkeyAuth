@@ -18,9 +18,6 @@ public class SecurityConfig {
 	public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
 		http
 		.authorizeExchange()
-		.pathMatchers("/client/token").permitAll()
-		.pathMatchers("/user/token").permitAll()
-		.pathMatchers("/user/refresh").permitAll()
 		.anyExchange().authenticated()
 		.and().csrf().disable();
 
