@@ -68,5 +68,10 @@
     "name": "jwk.issuer",
     "type": "java.lang.String",
     "description": "A description for 'jwk.issuer'"
+  },
+  {
+    "name": "turkey.port",
+    "type": "java.lang.String",
+    "description": "A description for 'turkey.port'"
   }
 ]}

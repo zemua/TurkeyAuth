@@ -3,6 +3,10 @@ server:
 turkey:
   scheme: http
   host: localhost
+  gateway:
+    port: 8080
+  usermgm:
+    port: 8081
   authscheme: http
   authport: 28080
   authhost: localhost
@@ -11,6 +15,11 @@ turkey:
   authclient: turkeyTest
   authsecret: gYrhtCrDekDl0nkclhI1yjWN5dUqTbND
   tokenproperty: access_token
+  paths:
+    token: /auth/realms/${turkey.realm}/protocol/openid-connect/token
+    createuser: /client/create
+    verifyemail: /client/verify
+    changepass: /client/password
 jwk:
   endpoint: ${turkey.authscheme}://${turkey.authhost}:${turkey.authport}/auth/realms/${turkey.realm}/protocol/openid-connect/certs
 spring:
@@ -20,7 +29,7 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: ${turkey.authscheme}://${turkey.authhost}:${turkey.authport}/auth/realms/${turkey.realm}
+          issuer-uri: ${turkey.scheme}://${turkey.host}:${turkey.gateway.port}/auth/realms/${turkey.realm}
       client:
         registration:
           keycloak:
