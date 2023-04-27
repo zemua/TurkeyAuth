@@ -29,7 +29,7 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: ${turkey.scheme}://${turkey.host}:${turkey.gateway.port}/auth/realms/${turkey.realm}
+          issuer-uri: ${turkey.authscheme}://${turkey.authhost}:${turkey.authport}/auth/realms/${turkey.realm}
       client:
         registration:
           keycloak:
