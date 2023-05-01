@@ -1,0 +1,77 @@
+{"properties": [
+  {
+    "name": "turkey.scheme",
+    "type": "java.lang.String",
+    "description": "A description for 'turkey.scheme'"
+  },
+  {
+    "name": "turkey.host",
+    "type": "java.lang.String",
+    "description": "A description for 'turkey.host'"
+  },
+  {
+    "name": "turkey.authscheme",
+    "type": "java.lang.String",
+    "description": "A description for 'turkey.authscheme'"
+  },
+  {
+    "name": "turkey.authport",
+    "type": "java.lang.String",
+    "description": "A description for 'turkey.authport'"
+  },
+  {
+    "name": "turkey.authhost",
+    "type": "java.lang.String",
+    "description": "A description for 'turkey.authhost'"
+  },
+  {
+    "name": "turkey.authclient",
+    "type": "java.lang.String",
+    "description": "A description for 'turkey.authclient'"
+  },
+  {
+    "name": "turkey.authsecret",
+    "type": "java.lang.String",
+    "description": "A description for 'turkey.authsecret'"
+  },
+  {
+    "name": "turkey.logouturl",
+    "type": "java.lang.String",
+    "description": "A description for 'turkey.logouturl'"
+  },
+  {
+    "name": "jwk.endpoint",
+    "type": "java.lang.String",
+    "description": "A description for 'jwk.endpoint'"
+  },
+  {
+    "name": "turkey.realm",
+    "type": "java.lang.String",
+    "description": "A description for 'turkey.realm'"
+  },
+  {
+    "name": "turkey.authcontenttype",
+    "type": "java.lang.String",
+    "description": "A description for 'turkey.authcontenttype'"
+  },
+  {
+    "name": "turkey.tokenproperty",
+    "type": "java.lang.String",
+    "description": "A description for 'turkey.tokenproperty'"
+  },
+  {
+    "name": "turkey.credentialtype",
+    "type": "java.lang.String",
+    "description": "A description for 'turkey.credentialtype'"
+  },
+  {
+    "name": "jwk.issuer",
+    "type": "java.lang.String",
+    "description": "A description for 'jwk.issuer'"
+  },
+  {
+    "name": "turkey.port",
+    "type": "java.lang.String",
+    "description": "A description for 'turkey.port'"
+  }
+]}
