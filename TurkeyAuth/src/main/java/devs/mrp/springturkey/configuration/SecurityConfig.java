@@ -1,6 +1,5 @@
 package devs.mrp.springturkey.configuration;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
@@ -10,9 +9,6 @@ import org.springframework.security.web.server.SecurityWebFilterChain;
 @Configuration
 @EnableWebFluxSecurity
 public class SecurityConfig {
-
-	@Value("${jwk.endpoint}")
-	private String jwkEndpoint;
 
 	@Bean
 	public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
